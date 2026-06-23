@@ -23,7 +23,6 @@
 }
 
 .cards > ul > li img { /* @boilerplate */
-  width: 100%; /* @boilerplate */
   aspect-ratio: var(--cards-image-aspect-ratio); /* @boilerplate */
   object-fit: var(--cards-image-object-fit); /* @boilerplate */
 }
