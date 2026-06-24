@@ -1,0 +1,39 @@
+{
+  "variantName": "columns-cta",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2026-03-31T18:17:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.vyepti.com/",
+    "originPage": "pharmaceutical homepage",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "wide",
+    "purpose": "cta-cards",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "2x (eyebrow + heading + text + CTA)",
+    "buttonCount": 2,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "side-by-side CTA sections",
+      "two-column promotional cards",
+      "dual call-to-action layouts"
+    ],
+    "notSuitableFor": [
+      "image-text columns",
+      "multi-column text layouts",
+      "comparison tables"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2026-03-31T18:17:00.000Z"
+  }
+}

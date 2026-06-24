@@ -1,0 +1,59 @@
+/* columns-cta design tokens
+ * Tier-2 component tokens for the two-column CTA card variant imported from the
+ * vyepti POC. Reference Tier-1 semantic tokens (styles/styles.css) where one
+ * exists; values with no Tier-1 equivalent (card shadow, decorative bottom
+ * border, card geometry) are defined here as descriptive block tokens.
+ */
+:root {
+  /* section wrapper spacing */
+  --columns-cta-wrapper-padding-top: 20px;
+  --columns-cta-wrapper-padding-bottom: 40px;
+
+  /* card surface */
+  --columns-cta-card-shadow: rgb(46 50 51 / 20%) 0 2px 8px 0;
+  --columns-cta-card-radius: 10px;
+  --columns-cta-card-padding: 42px 32px 50px;
+  --columns-cta-card-padding-desktop: 42px 66px 50px;
+
+  /* stacked (mobile) gap between cards / desktop row gap */
+  --columns-cta-gap: 32px;
+  --columns-cta-gap-desktop: 30px;
+
+  /* decorative bottom callout border */
+  --columns-cta-callout-height: 10px;
+  --columns-cta-callout-image: url("/icons/half-callout.svg");
+
+  /* eyebrow (teal) */
+  --columns-cta-eyebrow-color: var(--brand-primary);
+  --columns-cta-eyebrow-font-size: var(--heading-font-size-m);
+  --columns-cta-eyebrow-font-weight: var(--font-weight-bold);
+  --columns-cta-eyebrow-line-height: 1.5;
+  --columns-cta-eyebrow-padding-bottom: 10px;
+
+  /* heading (rose) */
+  --columns-cta-heading-color: var(--brand-secondary);
+  --columns-cta-heading-font-size: var(--heading-font-size-xl);
+  --columns-cta-heading-font-weight: var(--font-weight-bold);
+  --columns-cta-heading-line-height: 1;
+  --columns-cta-heading-padding: 16px 0;
+
+  /* description */
+  --columns-cta-text-color: var(--text-color);
+  --columns-cta-text-font-size: var(--body-font-size-s);
+  --columns-cta-text-line-height: 1.125;
+
+  /* CTA button (filled teal pill with chevron) */
+  --columns-cta-button-background: var(--brand-primary);
+  --columns-cta-button-hover-background: var(--brand-primary-light);
+  --columns-cta-button-color: var(--background-color);
+  --columns-cta-button-font-size: var(--button-font-size);
+  --columns-cta-button-font-weight: var(--button-font-weight);
+  --columns-cta-button-padding: var(--button-padding);
+  --columns-cta-button-border-width: var(--button-border-width);
+  --columns-cta-button-border-radius: var(--button-border-radius);
+  --columns-cta-button-margin-top: 32px;
+
+  /* chevron drawn from button borders */
+  --columns-cta-chevron-size: 10px;
+  --columns-cta-chevron-gap: 14px;
+}

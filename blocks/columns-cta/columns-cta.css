@@ -1,0 +1,132 @@
+@import url('./columns-cta-tokens.css');
+
+/* Columns CTA - two-column layout with eyebrow, heading, description, and CTA button */
+
+/* Section wrapper spacing */
+main > .section > .columns-cta-wrapper {
+  padding-top: var(--columns-cta-wrapper-padding-top);
+  padding-bottom: var(--columns-cta-wrapper-padding-bottom);
+}
+
+.columns-cta > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--columns-cta-gap);
+}
+
+/* Each column - styled as a shadow card */
+.columns-cta > div > div {
+  order: 1;
+  box-shadow: var(--columns-cta-card-shadow);
+  border-radius: var(--columns-cta-card-radius);
+  padding: var(--columns-cta-card-padding);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.columns-cta > div > div:not(.columns-cta-img-col)::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: var(--columns-cta-callout-height);
+  background-image: var(--columns-cta-callout-image);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.columns-cta > div > .columns-cta-img-col {
+  order: 0;
+}
+
+.columns-cta > div > .columns-cta-img-col img {
+  display: block;
+  width: 100%;
+}
+
+/* Eyebrow heading (h4) - teal */
+.columns-cta p strong:first-child {
+  font-size: var(--columns-cta-eyebrow-font-size);
+  font-weight: var(--columns-cta-eyebrow-font-weight);
+  color: var(--columns-cta-eyebrow-color);
+  line-height: var(--columns-cta-eyebrow-line-height);
+  margin: 0;
+  padding-bottom: var(--columns-cta-eyebrow-padding-bottom);
+}
+
+/* Main heading (h2) - rose */
+.columns-cta h2 {
+  font-size: var(--columns-cta-heading-font-size);
+  font-weight: var(--columns-cta-heading-font-weight);
+  color: var(--columns-cta-heading-color);
+  line-height: var(--columns-cta-heading-line-height);
+  margin: 0;
+  padding: var(--columns-cta-heading-padding);
+}
+
+/* Description paragraph */
+.columns-cta p {
+  font-size: var(--columns-cta-text-font-size);
+  font-weight: 400;
+  color: var(--columns-cta-text-color);
+  line-height: var(--columns-cta-text-line-height);
+  margin: 0;
+}
+
+/* CTA link - teal filled pill button with chevron */
+.columns-cta a,
+.columns-cta a.button {
+  display: inline-block;
+  background-color: var(--columns-cta-button-background);
+  color: var(--columns-cta-button-color);
+  font-size: var(--columns-cta-button-font-size);
+  font-weight: var(--columns-cta-button-font-weight);
+  text-decoration: none;
+  padding: var(--columns-cta-button-padding);
+  margin: var(--columns-cta-button-margin-top) 0 0;
+  border: var(--columns-cta-button-border-width) solid var(--columns-cta-button-background);
+  border-radius: var(--columns-cta-button-border-radius);
+  transition: var(--button-transition);
+  white-space: nowrap;
+}
+
+.columns-cta a::after,
+.columns-cta a.button::after {
+  background-image: none;
+  border: solid var(--columns-cta-button-color);
+  border-width: 0 2px 2px 0;
+  width: var(--columns-cta-chevron-size);
+  height: var(--columns-cta-chevron-size);
+  transform: rotate(-45deg);
+  margin-left: var(--columns-cta-chevron-gap);
+}
+
+.columns-cta a:hover,
+.columns-cta a:focus,
+.columns-cta a.button:hover,
+.columns-cta a.button:focus {
+  background-color: var(--columns-cta-button-hover-background);
+  border-color: var(--columns-cta-button-hover-background);
+}
+
+/* Images within columns */
+.columns-cta img {
+  width: 100%;
+}
+
+@media (width >= 992px) {
+  .columns-cta > div {
+    align-items: stretch;
+    flex-direction: row;
+    gap: var(--columns-cta-gap-desktop);
+  }
+
+  .columns-cta > div > div {
+    flex: 1;
+    order: unset;
+    padding: var(--columns-cta-card-padding-desktop);
+  }
+}
