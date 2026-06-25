@@ -523,6 +523,8 @@ export function decorateIconsAndBullets(element, prefix = '') {
  * Bracket syntax: [[class1,class2]text] → <span class="class1 class2">text</span>
  * Only alphanumeric, hyphen, and underscore are allowed in class names.
  * Malformed patterns (empty class list, invalid chars) are left unchanged.
+ * Alignment classes (center, left, right) are hoisted to the containing element
+ * instead of applied to a span.
  */
 
 function parseClasses(raw) {
@@ -539,11 +541,16 @@ function parseSplitClasses(raw) {
 
 const SPLIT_INLINE_TAGS = new Set(['STRONG', 'EM', 'A', 'BR']);
 
+const ALIGNMENT_CLASSES = new Set(['center', 'left', 'right']);
+
 // eslint-disable-next-line sonarjs/slow-regex
 const SPLIT_OPEN_RE = /\[\[([a-z0-9,-]+)\]\s*$/;
 
 // eslint-disable-next-line sonarjs/slow-regex
 const BRACKET_RE = /\[\[[^\]]+\]([^\]]*)\]/g;
+
+// eslint-disable-next-line sonarjs/slow-regex
+const TOOLTIP_OPEN_RE = /\[\[tooltip\]\s*$/;
 
 function applySplitBoundaryPass(el) {
   const children = [...el.childNodes];
@@ -559,17 +566,40 @@ function applySplitBoundaryPass(el) {
     const isNextText = next.nodeType === Node.TEXT_NODE;
 
     if (isPrevText && isMidInline && isNextText) {
-      // Pattern A: "prefix[[classes]" <inline>content</inline> "]suffix"
-      const openMatch = prev.nodeValue.match(SPLIT_OPEN_RE);
-      const classes = openMatch ? parseSplitClasses(openMatch[1]) : [];
-      const closeMatch = openMatch && classes.length ? next.nodeValue.match(/^\s*\]/) : null;
-      if (closeMatch) {
+      // tooltip branch: [[tooltip]<a href="#" title="...">text</a>]
+      // The <a> is replaced entirely — not wrapped — with a <span data-tooltip="...">.
+      const isTooltipAnchor = mid.nodeName === 'A'
+        && mid.getAttribute('href') === '#'
+        && mid.getAttribute('title');
+      const tooltipCloseMatch = isTooltipAnchor && TOOLTIP_OPEN_RE.test(prev.nodeValue)
+        ? next.nodeValue.match(/^\s*\]/) : null;
+      if (tooltipCloseMatch) {
         const span = document.createElement('span');
-        span.className = classes.join(' ');
-        span.appendChild(mid);
-        el.insertBefore(span, next);
-        prev.nodeValue = prev.nodeValue.slice(0, -openMatch[0].length);
-        next.nodeValue = next.nodeValue.slice(closeMatch[0].length);
+        span.className = 'tooltip';
+        span.dataset.tooltip = mid.getAttribute('title');
+        span.textContent = mid.textContent;
+        el.insertBefore(span, mid);
+        el.removeChild(mid);
+        prev.nodeValue = prev.nodeValue.replace(TOOLTIP_OPEN_RE, '');
+        next.nodeValue = next.nodeValue.slice(tooltipCloseMatch[0].length);
+      } else {
+        // Pattern A: "prefix[[classes]" <inline>content</inline> "]suffix"
+        const openMatch = prev.nodeValue.match(SPLIT_OPEN_RE);
+        const classes = openMatch ? parseSplitClasses(openMatch[1]) : [];
+        const closeMatch = openMatch && classes.length ? next.nodeValue.match(/^\s*\]/) : null;
+        if (closeMatch) {
+          const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
+          const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+          if (alignClasses.length) el.classList.add(...alignClasses);
+          prev.nodeValue = prev.nodeValue.slice(0, -openMatch[0].length);
+          next.nodeValue = next.nodeValue.slice(closeMatch[0].length);
+          if (regularClasses.length) {
+            const span = document.createElement('span');
+            span.className = regularClasses.join(' ');
+            span.appendChild(mid);
+            el.insertBefore(span, next);
+          }
+        }
       }
     } else if (!isPrevText && mid.nodeType === Node.TEXT_NODE && !isNextText && next.children.length === 0) {
       // Pattern B: <inline>prefix[[</inline> "classes" <inline>]content]</inline>
@@ -582,12 +612,17 @@ function applySplitBoundaryPass(el) {
       const classes = parseSplitClasses(mid.nodeValue);
       if (isPrevInline && isNextInline && openerText.endsWith('[[') && classes.length
         && closerText.startsWith(']') && closerText.endsWith(']')) {
-        const insertRef = next.nextSibling;
-        const span = document.createElement('span');
-        span.className = classes.join(' ');
+        const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
+        const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+        if (alignClasses.length) el.classList.add(...alignClasses);
         next.textContent = closerText.slice(1, -1);
-        span.appendChild(next);
-        el.insertBefore(span, insertRef);
+        if (regularClasses.length) {
+          const insertRef = next.nextSibling;
+          const span = document.createElement('span');
+          span.className = regularClasses.join(' ');
+          span.appendChild(next);
+          el.insertBefore(span, insertRef);
+        }
         if (openerText === '[[') el.removeChild(prev);
         else prev.textContent = openerText.slice(0, -2);
         el.removeChild(mid);
@@ -612,7 +647,7 @@ export function applySpanTags(text) {
   });
 }
 
-function replaceTextNode(textNode) {
+function replaceTextNode(textNode, containingEl) {
   const text = textNode.nodeValue;
   const frag = document.createDocumentFragment();
   let lastIndex = 0;
@@ -633,10 +668,17 @@ function replaceTextNode(textNode) {
     if (!classes.length) {
       frag.appendChild(document.createTextNode(full));
     } else {
-      const span = document.createElement('span');
-      span.className = classes.join(' ');
-      span.textContent = content;
-      frag.appendChild(span);
+      const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
+      const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+      if (alignClasses.length && containingEl) containingEl.classList.add(...alignClasses);
+      if (regularClasses.length) {
+        const span = document.createElement('span');
+        span.className = regularClasses.join(' ');
+        span.textContent = content;
+        frag.appendChild(span);
+      } else {
+        frag.appendChild(document.createTextNode(content));
+      }
     }
 
     lastIndex = match.index + full.length;
@@ -676,8 +718,51 @@ function cleanAttributes(element) {
   });
 }
 
+function hoistAlignmentAcrossInlines(el) {
+  // Handles [[alignment-class]content] where content spans inline elements,
+  // causing the opening [[class] and closing ] to land in different text nodes.
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  let n = walker.nextNode();
+  while (n) { textNodes.push(n); n = walker.nextNode(); }
+
+  for (let i = 0; i < textNodes.length - 1; i += 1) {
+    const node = textNodes[i];
+    const text = node.nodeValue;
+    const openIdx = text.lastIndexOf('[[');
+    if (openIdx === -1) continue; // eslint-disable-line no-continue
+
+    const tail = text.slice(openIdx);
+    // If the bracket expression is fully contained in this node, replaceTextNode handles it
+    if (/^\[\[[^\]]+\][^\]]*\]/.test(tail)) continue; // eslint-disable-line no-continue
+
+    // eslint-disable-next-line sonarjs/slow-regex
+    const classMatch = tail.match(/^\[\[([a-zA-Z0-9_,-]+)\]/);
+    if (!classMatch) continue; // eslint-disable-line no-continue
+
+    const classes = parseClasses(classMatch[1]);
+    const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
+    // Only handle pure-alignment spanning patterns; mixed (alignment + span classes) needs Range API
+    if (!alignClasses.length || classes.length !== alignClasses.length) continue; // eslint-disable-line no-continue
+
+    for (let j = i + 1; j < textNodes.length; j += 1) {
+      const closeNode = textNodes[j];
+      const closeText = closeNode.nodeValue;
+      const closeIdx = closeText.indexOf(']');
+      if (closeIdx === -1) continue; // eslint-disable-line no-continue
+
+      el.classList.add(...alignClasses);
+      node.nodeValue = text.slice(0, openIdx) + tail.slice(classMatch[0].length);
+      closeNode.nodeValue = closeText.slice(0, closeIdx) + closeText.slice(closeIdx + 1);
+      break;
+    }
+  }
+}
+
 export function decorateSpanTags(element) {
   element.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li').forEach((el) => {
+    if (el.textContent.includes('[[')) hoistAlignmentAcrossInlines(el);
+
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const nodes = [];
     let node = walker.nextNode();
@@ -685,7 +770,7 @@ export function decorateSpanTags(element) {
       if (node.nodeValue.includes('[[')) nodes.push(node);
       node = walker.nextNode();
     }
-    nodes.forEach(replaceTextNode);
+    nodes.forEach((n) => replaceTextNode(n, el));
     applySplitBoundaryPass(el);
   });
 
