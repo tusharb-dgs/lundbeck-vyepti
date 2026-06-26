@@ -579,10 +579,9 @@ main > .section > div { /* @libs */
   padding: 0 15px; /* @libs */
 }
 
-/* flex sections — a run of adjacent style=flex sections is wrapped by JS in a
-   .flex-group; the group is its own independent flex context (no crossover with
-   other groups). Section-level only: equal-width columns regardless of block type.
-   Stacks below 900px, side-by-side at >=900px. */
+/* flex sections — adjacent sections with style=flex are wrapped by JS in a
+   .flex-group (see groupFlexSections in scripts.js). Each group is its own
+   flex context; a non-flex section breaks the run. Mobile: stack vertically. */
 main .flex-group {
   display: flex;
   flex-direction: column;
@@ -591,18 +590,6 @@ main .flex-group {
 
 main .flex-group > .section.flex {
   margin: 0;
-}
-
-@media (width >= 900px) {
-  main .flex-group {
-    flex-direction: row;
-    align-items: stretch;
-  }
-
-  main .flex-group > .section.flex {
-    flex: 1 1 0;
-    min-width: 0;
-  }
 }
 
 /* section metadata - accent (light blue help strip) */
@@ -786,6 +773,17 @@ main .section.stats-callout h4 {
 main > .section > div { /* @libs */
   max-width: var(--max-width-site); /* @libs */
   padding: 0 32px; /* @libs */
+}
+
+/* flex sections — equal-width columns side-by-side; section-level only */
+main .flex-group {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+main .flex-group > .section.flex {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 main .section.stats-callout > div:not(.bg-image) {
