@@ -348,3 +348,207 @@
     padding-left: 0; /* @libs */
   }
 }
+
+/* email resource modal — matches vyepti.com downloadable-resources #tile-modal */
+body.accordion-cards-email-modal-open { /* @libs */
+  overflow: hidden; /* @libs */
+}
+
+.accordion-cards-email-dialog { /* @libs */
+  width: min(535px, calc(100vw - 30px)); /* @libs */
+  max-width: 535px; /* @libs */
+  margin: auto; /* @libs */
+  padding: 0; /* @libs */
+  border: 0; /* @libs */
+  background: transparent; /* @libs */
+}
+
+.accordion-cards-email-dialog::backdrop { /* @libs */
+  background: rgb(19 19 19 / 75%); /* @libs */
+}
+
+.accordion-cards-email-modal { /* @libs */
+  background: var(--card-bg-light); /* @libs */
+  color: var(--text-color); /* @libs */
+}
+
+.accordion-cards-email-modal-header { /* @libs */
+  position: relative; /* @libs */
+  padding: 24px 77px 16px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards-email-modal-title { /* @libs */
+  margin: 0; /* @libs */
+  color: var(--brand-primary); /* @libs */
+  font-family: var(--heading-font-family); /* @libs */
+  font-size: 24px; /* @libs */
+  font-weight: 700; /* @libs */
+  line-height: 29px; /* @libs */
+}
+
+.accordion-cards-email-modal-close { /* @libs */
+  position: absolute; /* @libs */
+  top: 22px; /* @libs */
+  right: 22px; /* @libs */
+  width: 44px; /* @libs */
+  height: 44px; /* @libs */
+  margin: 0; /* @libs */
+  border: 0; /* @libs */
+  border-radius: 0; /* @libs */
+  padding: 0; /* @libs */
+  background: transparent; /* @libs */
+  color: var(--text-color); /* @libs */
+  cursor: pointer; /* @libs */
+}
+
+.accordion-cards-email-modal-close .icon.icon-close { /* @libs */
+  position: relative; /* @libs */
+  display: block; /* @libs */
+  width: 16px; /* @libs */
+  height: 16px; /* @libs */
+  margin: 0 auto; /* @libs */
+}
+
+.accordion-cards-email-modal-close .icon.icon-close::before,
+.accordion-cards-email-modal-close .icon.icon-close::after { /* @libs */
+  content: ''; /* @libs */
+  position: absolute; /* @libs */
+  top: 50%; /* @libs */
+  left: 50%; /* @libs */
+  width: 16px; /* @libs */
+  height: 2px; /* @libs */
+  border-radius: 2px; /* @libs */
+  background: currentcolor; /* @libs */
+}
+
+.accordion-cards-email-modal-close .icon.icon-close::before { /* @libs */
+  transform: translate(-50%, -50%) rotate(45deg); /* @libs */
+}
+
+.accordion-cards-email-modal-close .icon.icon-close::after { /* @libs */
+  transform: translate(-50%, -50%) rotate(-45deg); /* @libs */
+}
+
+.accordion-cards-email-modal-body { /* @libs */
+  padding: 0 20px 32px; /* @libs */
+}
+
+@media (width >= 768px) { /* @libs */
+  .accordion-cards-email-modal-body { /* @libs */
+    padding: 0 84px 32px; /* @libs */
+  }
+}
+
+.accordion-cards-email-form { /* @libs */
+  padding: 0 11px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards-email-field { /* @libs */
+  margin-bottom: 22px; /* @libs */
+  text-align: left; /* @libs */
+}
+
+.accordion-cards-email-required-note { /* @libs */
+  margin: 0 0 8px; /* @libs */
+  font-size: 14px; /* @libs */
+  font-style: italic; /* @libs */
+  line-height: 20px; /* @libs */
+  text-align: left; /* @libs */
+}
+
+.accordion-cards-email-field label { /* @libs */
+  display: block; /* @libs */
+  margin-bottom: 8px; /* @libs */
+  color: var(--brand-primary); /* @libs */
+  font-size: 18px; /* @libs */
+  font-weight: 600; /* @libs */
+  line-height: 24px; /* @libs */
+}
+
+.accordion-cards-email-field input { /* @libs */
+  box-sizing: border-box; /* @libs */
+  width: 100%; /* @libs */
+  padding: 8px 12px; /* @libs */
+  border: 1px solid #484848; /* @libs */
+  border-radius: 8px; /* @libs */
+  background: #fff; /* @libs */
+  color: var(--text-color); /* @libs */
+  font-size: 16px; /* @libs */
+  line-height: 22px; /* @libs */
+}
+
+.accordion-cards-email-field-error { /* @libs */
+  margin: 8px 0 0; /* @libs */
+  color: var(--brand-secondary); /* @libs */
+  font-size: 14px; /* @libs */
+  line-height: 21px; /* @libs */
+}
+
+.accordion-cards-email-submit { /* @libs */
+  display: inline-flex; /* @libs */
+  align-items: center; /* @libs */
+  justify-content: center; /* @libs */
+  gap: 10px; /* @libs */
+  min-width: 128px; /* @libs */
+  margin: 16px auto 0; /* @libs */
+  padding: 10px 24px; /* @libs */
+  border: 0; /* @libs */
+  border-radius: 999px; /* @libs */
+  background: var(--brand-primary); /* @libs */
+  color: #fff; /* @libs */
+  font-size: 18px; /* @libs */
+  font-weight: 700; /* @libs */
+  line-height: 20px; /* @libs */
+  cursor: pointer; /* @libs */
+}
+
+.accordion-cards-email-submit-icon { /* @libs */
+  width: 20px; /* @libs */
+  height: 8px; /* @libs */
+  background-color: currentcolor; /* @libs */
+  mask: url("/icons/icon-forward-arrow.svg") no-repeat center / contain; /* @libs */
+}
+
+.accordion-cards-email-error { /* @libs */
+  margin: 8px 0 0; /* @libs */
+  color: var(--brand-secondary); /* @libs */
+  font-size: 14px; /* @libs */
+  line-height: 21px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards-email-terms { /* @libs */
+  margin-top: 16px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards-email-terms p { /* @libs */
+  margin: 0; /* @libs */
+  font-size: 16px; /* @libs */
+  line-height: 22px; /* @libs */
+}
+
+.accordion-cards-email-terms a { /* @libs */
+  text-decoration: underline; /* @libs */
+}
+
+.accordion-cards-email-success { /* @libs */
+  padding: 0 20px 40px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards-email-success-title { /* @libs */
+  margin: 0 0 8px; /* @libs */
+  color: var(--brand-primary); /* @libs */
+  font-size: 22px; /* @libs */
+  font-weight: 700; /* @libs */
+  line-height: 28px; /* @libs */
+}
+
+.accordion-cards-email-success-text { /* @libs */
+  margin: 0; /* @libs */
+  font-size: 22px; /* @libs */
+  line-height: 28px; /* @libs */
+}

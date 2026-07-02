@@ -1,6 +1,11 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+const SCROLL_OFFSET_TOKEN = 'accordion-cards-scroll-offset';
+const SCROLL_DURATION_TOKEN = 'accordion-cards-scroll-duration';
+const SCROLL_OFFSET_FALLBACK = 40;
+const SCROLL_DURATION_FALLBACK = 500;
+
 function optimizeCardImage(imageCol) {
   const img = imageCol.querySelector('img');
   if (!(img instanceof HTMLImageElement) || !img.src) return;
@@ -8,6 +13,12 @@ function optimizeCardImage(imageCol) {
   const optimizedImg = optimizedPic.querySelector('img');
   if (optimizedImg instanceof HTMLImageElement) moveInstrumentation(img, optimizedImg);
   img.closest('picture')?.replaceWith(optimizedPic);
+}
+
+function isActionText(text) {
+  const normalized = text.replace(/:icon-[a-z0-9-]+:/gi, '').replace(/\s+/g, ' ').trim();
+  return normalized.length <= 40
+    && /^(download|email|sign up|signup|find a location)\b/i.test(normalized);
 }
 
 function isActionParagraph(node) {
@@ -49,6 +60,10 @@ function isDownloadActionLink(anchor) {
   }
 }
 
+function isEmailActionLink(anchor) {
+  return /^email$/i.test(getActionLinkLabel(anchor));
+}
+
 function buildActionLink(anchor) {
   anchor.classList.add('accordion-cards-action-link');
 
@@ -61,6 +76,10 @@ function buildActionLink(anchor) {
   if (isDownloadActionLink(anchor)) {
     anchor.setAttribute('target', '_blank');
     anchor.setAttribute('rel', 'noopener noreferrer');
+  } else if (isEmailActionLink(anchor)) {
+    anchor.setAttribute('href', '#');
+    anchor.setAttribute('role', 'button');
+    anchor.classList.add('accordion-cards-action-email');
   }
 
   return anchor;
@@ -74,12 +93,6 @@ function paragraphHasActionContent(paragraph) {
 function getActionHrefFromGroup(paragraphs) {
   const anchor = paragraphs.flatMap((p) => [...p.querySelectorAll('a[href]')])[0];
   return anchor instanceof HTMLAnchorElement ? anchor.href : null;
-}
-
-function isActionText(text) {
-  const normalized = text.replace(/:icon-[a-z0-9-]+:/gi, '').replace(/\s+/g, ' ').trim();
-  return normalized.length <= 40
-    && /^(download|email|sign up|signup|find a location)\b/i.test(normalized);
 }
 
 function wrapParagraphInActionLink(paragraph, href) {
@@ -336,14 +349,12 @@ function setSectionExpanded(section, expanded) {
   }
 }
 
-function getTokenPx(token, fallback) {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+function getTokenPx(tokenName, fallback) {
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(`--${tokenName}`)
+    .trim();
   const parsed = parseFloat(value);
   return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function getTokenMs(token, fallback) {
-  return getTokenPx(token, fallback);
 }
 
 function animateScrollTo(top, duration) {
@@ -375,8 +386,8 @@ function scrollAccordionCardsHeaderIntoView(header) {
   if (!(header instanceof Element)) return;
   const top = header.getBoundingClientRect().top
     + window.scrollY
-    - getTokenPx('--accordion-cards-scroll-offset', 40);
-  animateScrollTo(top, getTokenMs('--accordion-cards-scroll-duration', 500));
+    - getTokenPx(SCROLL_OFFSET_TOKEN, SCROLL_OFFSET_FALLBACK);
+  animateScrollTo(top, getTokenPx(SCROLL_DURATION_TOKEN, SCROLL_DURATION_FALLBACK));
 }
 
 function scheduleAccordionCardsScroll(header) {
@@ -387,6 +398,395 @@ function scheduleAccordionCardsScroll(header) {
     });
   });
 }
+
+/* eslint-disable secure-coding/no-hardcoded-credentials -- modal class names and public endpoint paths, not secrets */
+const RESOURCE_MODAL_ID = 'accordion-cards-resource-modal';
+const RESOURCE_SHARE_SEGMENTS = ['api', 'dtc', 'vyeptidownloadableresources'];
+const PRIVACY_POLICY_PATH = '/us/privacy-policy';
+const PRIVACY_POLICY_HOST = 'https://www.lundbeck.com';
+
+let modalDialog = null;
+let selectedResource = null;
+
+function getResourceShareUrl() {
+  const base = window.location.hostname.includes('vyepti.com')
+    ? window.location.origin
+    : 'https://www.vyepti.com';
+  return `${base}/${RESOURCE_SHARE_SEGMENTS.join('/')}`;
+}
+
+function getPrivacyPolicyUrl() {
+  return new URL(PRIVACY_POLICY_PATH, PRIVACY_POLICY_HOST).href;
+}
+
+function normalizeName(value) {
+  return value.replace(/['‘’]/g, "'").trim();
+}
+
+function isValidName(value) {
+  if (!value || value.length > 20) return false;
+  let hasLetter = false;
+  for (let i = 0; i < value.length; i += 1) {
+    const char = value[i];
+    const code = value.charCodeAt(i);
+    const isLetter = (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+    if (isLetter) hasLetter = true;
+    if (!(isLetter || char === ' ' || char === "'" || char === '-')) return false;
+  }
+  return hasLetter;
+}
+
+function isValidEmail(value) {
+  if (!value || value.length < 6 || value.length > 50) return false;
+  const probe = document.createElement('input');
+  probe.type = 'email';
+  probe.value = value;
+  return probe.checkValidity();
+}
+
+function getCardResource(card) {
+  const titleEl = card.querySelector('.accordion-cards-card-title, h3, h4');
+  const downloadLink = [...card.querySelectorAll('.accordion-cards-action-link')]
+    .find((link) => {
+      try {
+        return /\.pdf$/i.test(new URL(link.href, window.location.href).pathname);
+      } catch {
+        return false;
+      }
+    });
+  const img = card.querySelector('.accordion-cards-card-image img');
+
+  return {
+    title: titleEl?.textContent?.trim() || '',
+    resourcePath: downloadLink?.href ? encodeURI(downloadLink.href) : '',
+    thumbnailImagePath: img?.src ? encodeURI(img.src) : '',
+    altText: img?.alt || '',
+  };
+}
+
+function setFormVisible(formWrap, visible) {
+  formWrap.hidden = !visible;
+}
+
+function setSuccessVisible(successWrap, visible) {
+  successWrap.hidden = !visible;
+}
+
+function setErrorVisible(errorEl, visible, message = '') {
+  errorEl.hidden = !visible;
+  errorEl.textContent = message;
+}
+
+function resetEmailModalForm(form) {
+  form.reset();
+  form.querySelectorAll('.accordion-cards-email-field-error').forEach((el) => {
+    el.hidden = true;
+    el.textContent = '';
+  });
+  setErrorVisible(form.querySelector('.accordion-cards-email-error'), false);
+  setFormVisible(form.closest('.accordion-cards-email-modal-body'), true);
+  setSuccessVisible(form.closest('.accordion-cards-email-modal')?.querySelector('.accordion-cards-email-success'), false);
+}
+
+function showFieldError(input, message) {
+  const errorEl = input.closest('.accordion-cards-email-field')?.querySelector('.accordion-cards-email-field-error');
+  if (errorEl instanceof HTMLElement) {
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  }
+  input.setAttribute('aria-invalid', 'true');
+}
+
+function clearFieldError(input) {
+  const errorEl = input.closest('.accordion-cards-email-field')?.querySelector('.accordion-cards-email-field-error');
+  if (errorEl instanceof HTMLElement) {
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  }
+  input.removeAttribute('aria-invalid');
+}
+
+function validateEmailForm(form) {
+  let valid = true;
+  const firstName = form.querySelector('input[name="FirstName"]');
+  const lastName = form.querySelector('input[name="LastName"]');
+  const email = form.querySelector('input[name="Email"]');
+
+  [firstName, lastName, email].forEach((input) => {
+    if (input instanceof HTMLInputElement) clearFieldError(input);
+  });
+
+  if (firstName instanceof HTMLInputElement) {
+    const value = normalizeName(firstName.value);
+    if (!value) {
+      showFieldError(firstName, 'Please enter your first name');
+      valid = false;
+    } else if (!isValidName(value)) {
+      showFieldError(firstName, 'Please enter a valid first name');
+      valid = false;
+    }
+  }
+
+  if (lastName instanceof HTMLInputElement) {
+    const value = normalizeName(lastName.value);
+    if (!value) {
+      showFieldError(lastName, 'Please enter your last name');
+      valid = false;
+    } else if (!isValidName(value)) {
+      showFieldError(lastName, 'Please enter a valid last name');
+      valid = false;
+    }
+  }
+
+  if (email instanceof HTMLInputElement) {
+    const value = email.value.trim();
+    if (!isValidEmail(value)) {
+      showFieldError(email, 'Please enter a valid email address');
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
+async function submitEmailForm(form) {
+  const firstName = form.querySelector('input[name="FirstName"]');
+  const lastName = form.querySelector('input[name="LastName"]');
+  const email = form.querySelector('input[name="Email"]');
+  const submitButton = form.querySelector('button[type="submit"]');
+  const errorEl = form.querySelector('.accordion-cards-email-error');
+  const modal = form.closest('.accordion-cards-email-modal');
+  const successEl = modal?.querySelector('.accordion-cards-email-success');
+  const bodyEl = form.closest('.accordion-cards-email-modal-body');
+
+  if (!(firstName instanceof HTMLInputElement)
+    || !(lastName instanceof HTMLInputElement)
+    || !(email instanceof HTMLInputElement)
+    || !(submitButton instanceof HTMLButtonElement)
+    || !(errorEl instanceof HTMLElement)
+    || !(successEl instanceof HTMLElement)
+    || !(bodyEl instanceof HTMLElement)) {
+    return;
+  }
+
+  const payload = new URLSearchParams({
+    firstName: normalizeName(firstName.value),
+    lastName: normalizeName(lastName.value),
+    emailAddress: email.value.trim(),
+    documents: JSON.stringify({
+      resources: selectedResource ? [selectedResource] : [],
+    }),
+  });
+
+  submitButton.disabled = true;
+  setErrorVisible(errorEl, false);
+
+  try {
+    const response = await fetch(getResourceShareUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: payload.toString(),
+    });
+    const data = await response.json();
+    if (data?.status) {
+      setFormVisible(bodyEl, false);
+      setSuccessVisible(successEl, true);
+      return;
+    }
+    setErrorVisible(
+      errorEl,
+      true,
+      'An error occurred. Please refresh your page and try again later.',
+    );
+  } catch {
+    setErrorVisible(
+      errorEl,
+      true,
+      'An error occurred. Please refresh your page and try again later.',
+    );
+  } finally {
+    submitButton.disabled = false;
+  }
+}
+
+function createEmailField(id, labelText, inputName, inputType, autocomplete) {
+  const field = document.createElement('div');
+  field.className = 'accordion-cards-email-field';
+
+  const label = document.createElement('label');
+  label.htmlFor = id;
+  label.textContent = labelText;
+
+  const input = document.createElement('input');
+  input.id = id;
+  input.name = inputName;
+  input.type = inputType;
+  input.maxLength = inputName === 'Email' ? 50 : 20;
+  input.autocomplete = autocomplete;
+  input.required = true;
+
+  const error = document.createElement('p');
+  error.className = 'accordion-cards-email-field-error';
+  error.hidden = true;
+
+  field.append(label, input, error);
+  return field;
+}
+
+function createEmailModal() {
+  const dialog = document.createElement('dialog');
+  dialog.id = RESOURCE_MODAL_ID;
+  dialog.className = 'accordion-cards-email-dialog';
+  dialog.setAttribute('aria-labelledby', 'accordion-cards-email-title');
+
+  const modal = document.createElement('div');
+  modal.className = 'accordion-cards-email-modal';
+
+  const header = document.createElement('div');
+  header.className = 'accordion-cards-email-modal-header';
+
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'accordion-cards-email-modal-close';
+  closeButton.setAttribute('aria-label', 'Close');
+  const closeIcon = document.createElement('span');
+  closeIcon.className = 'icon icon-close';
+  closeIcon.setAttribute('aria-hidden', 'true');
+  closeButton.append(closeIcon);
+
+  const title = document.createElement('h2');
+  title.id = 'accordion-cards-email-title';
+  title.className = 'accordion-cards-email-modal-title';
+  title.textContent = 'Email this resource';
+
+  header.append(closeButton, title);
+
+  const body = document.createElement('div');
+  body.className = 'accordion-cards-email-modal-body';
+
+  const form = document.createElement('form');
+  form.className = 'accordion-cards-email-form';
+  form.noValidate = true;
+
+  const formType = document.createElement('input');
+  formType.type = 'hidden';
+  formType.name = 'FormType';
+  formType.value = 'tile';
+
+  const requiredNote = document.createElement('p');
+  requiredNote.className = 'accordion-cards-email-required-note';
+  requiredNote.textContent = 'All fields are required';
+
+  const submitButton = document.createElement('button');
+  submitButton.type = 'submit';
+  submitButton.className = 'accordion-cards-email-submit';
+  submitButton.append(document.createTextNode('Send '));
+  const submitIcon = document.createElement('span');
+  submitIcon.className = 'accordion-cards-email-submit-icon';
+  submitIcon.setAttribute('aria-hidden', 'true');
+  submitButton.append(submitIcon);
+
+  const formError = document.createElement('p');
+  formError.className = 'accordion-cards-email-error';
+  formError.hidden = true;
+  formError.textContent = 'An error occurred. Please refresh your page and try again later.';
+
+  form.append(
+    formType,
+    requiredNote,
+    createEmailField('accordion-cards-email-first-name', 'First Name', 'FirstName', 'text', 'given-name'),
+    createEmailField('accordion-cards-email-last-name', 'Last Name', 'LastName', 'text', 'family-name'),
+    createEmailField('accordion-cards-email-address', 'Email address', 'Email', 'email', 'email'),
+    submitButton,
+    formError,
+  );
+
+  const terms = document.createElement('div');
+  terms.className = 'accordion-cards-email-terms';
+  const termsParagraph = document.createElement('p');
+  termsParagraph.append(document.createTextNode('Lundbeck will not save your personal information. See our '));
+  const privacyLink = document.createElement('a');
+  privacyLink.href = getPrivacyPolicyUrl();
+  privacyLink.target = '_blank';
+  privacyLink.rel = 'noopener noreferrer';
+  privacyLink.textContent = 'Privacy Policy';
+  termsParagraph.append(privacyLink, document.createTextNode('.'));
+  terms.append(termsParagraph);
+
+  body.append(form, terms);
+
+  const success = document.createElement('div');
+  success.className = 'accordion-cards-email-success';
+  success.hidden = true;
+
+  const successTitle = document.createElement('p');
+  successTitle.className = 'accordion-cards-email-success-title';
+  successTitle.textContent = 'Thank you!';
+
+  const successText = document.createElement('p');
+  successText.className = 'accordion-cards-email-success-text';
+  successText.textContent = 'Your resource is on its way to your inbox.';
+
+  success.append(successTitle, successText);
+  modal.append(header, body, success);
+  dialog.append(modal);
+
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  dialog.addEventListener('close', () => {
+    document.body.classList.remove('accordion-cards-email-modal-open');
+    if (form instanceof HTMLFormElement) resetEmailModalForm(form);
+    selectedResource = null;
+  });
+
+  closeButton.addEventListener('click', () => dialog.close());
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!validateEmailForm(form)) return;
+    submitEmailForm(form);
+  });
+
+  document.body.append(dialog);
+  return dialog;
+}
+
+function ensureEmailModal() {
+  if (!(modalDialog instanceof HTMLDialogElement)) {
+    modalDialog = document.getElementById(RESOURCE_MODAL_ID);
+  }
+  if (!(modalDialog instanceof HTMLDialogElement)) {
+    modalDialog = createEmailModal();
+  }
+  return modalDialog;
+}
+
+function openAccordionCardsEmailModal(resource) {
+  const dialog = ensureEmailModal();
+  selectedResource = resource;
+  const form = dialog.querySelector('.accordion-cards-email-form');
+  if (form instanceof HTMLFormElement) resetEmailModalForm(form);
+  document.body.classList.add('accordion-cards-email-modal-open');
+  dialog.showModal();
+}
+
+function setupAccordionCardsEmailModal(block) {
+  ensureEmailModal();
+
+  block.addEventListener('click', (event) => {
+    const link = event.target.closest('.accordion-cards-action-email');
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    event.preventDefault();
+    const card = link.closest('.accordion-cards-card');
+    if (!(card instanceof Element)) return;
+
+    openAccordionCardsEmailModal(getCardResource(card));
+  });
+}
+/* eslint-enable secure-coding/no-hardcoded-credentials */
 
 export default function decorate(block) {
   const wrapper = document.createElement('div');
@@ -430,4 +830,5 @@ export default function decorate(block) {
 
   block.textContent = '';
   block.append(wrapper);
+  setupAccordionCardsEmailModal(block);
 }
