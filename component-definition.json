@@ -59,6 +59,48 @@
       "id": "blocks",
       "components": [
         {
+          "title": "Accordion Cards",
+          "id": "accordion-cards",
+          "model": "accordion-cards",
+          "filter": "accordion-cards",
+          "plugins": {
+            "da": {
+              "name": "accordion-cards",
+              "rows": 0,
+              "columns": 0
+            }
+          }
+        },
+        {
+          "title": "Accordion Cards Section",
+          "id": "accordion-cards-section",
+          "model": "accordion-cards-section",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 4,
+              "fields": [
+                {
+                  "name": "summary",
+                  "selector": "div:nth-child(1)"
+                },
+                {
+                  "name": "intro",
+                  "selector": "div:nth-child(2)"
+                },
+                {
+                  "name": "leftCards",
+                  "selector": "div:nth-child(3)"
+                },
+                {
+                  "name": "rightCards",
+                  "selector": "div:nth-child(4)"
+                }
+              ]
+            }
+          }
+        },
+        {
           "title": "Accordion",
           "id": "accordion",
           "model": "accordion",

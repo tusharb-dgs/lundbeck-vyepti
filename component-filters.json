@@ -9,6 +9,7 @@
     "id": "section",
     "components": [
       "accordion",
+      "accordion-cards",
       "cards",
       "carousel",
       "columns",
@@ -24,6 +25,12 @@
       "table",
       "text",
       "video"
+    ]
+  },
+  {
+    "id": "accordion-cards",
+    "components": [
+      "accordion-cards-section"
     ]
   },
   {

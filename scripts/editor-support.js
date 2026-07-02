@@ -16,8 +16,11 @@ import {
 } from './scripts.js';
 
 function getState(block) {
-  if (block.matches('.accordion')) {
-    return [...block.querySelectorAll('li.accordion-item.active')].map(
+  if (block.matches('.accordion, .accordion-cards')) {
+    const itemSelector = block.matches('.accordion')
+      ? 'li.accordion-item.active'
+      : 'section.accordion-cards-item.is-expanded';
+    return [...block.querySelectorAll(itemSelector)].map(
       (item) => item.dataset.aueResource,
     );
   }
@@ -33,10 +36,21 @@ function getState(block) {
 }
 
 function setState(block, state) {
-  if (block.matches('.accordion')) {
-    block.querySelectorAll('li.accordion-item').forEach((item) => {
-      item.classList.toggle('active', state.includes(item.dataset.aueResource));
-    });
+  if (block.matches('.accordion, .accordion-cards')) {
+    if (block.matches('.accordion')) {
+      block.querySelectorAll('li.accordion-item').forEach((item) => {
+        item.classList.toggle('active', state.includes(item.dataset.aueResource));
+      });
+    } else {
+      block.querySelectorAll('section.accordion-cards-item').forEach((item) => {
+        const expanded = state.includes(item.dataset.aueResource);
+        item.classList.toggle('is-expanded', expanded);
+        const button = item.querySelector('.accordion-cards-item-trigger');
+        if (button instanceof HTMLButtonElement) {
+          button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        }
+      });
+    }
   }
   if (block.matches('.carousel')) {
     block.style.display = null;
@@ -147,10 +161,9 @@ function handleSelection(event) {
     const block = element.parentElement?.closest('.block[data-aue-resource]')
       || element?.closest('.block[data-aue-resource]');
 
-    if (block && block.matches('.accordion')) {
-      // close all details
-      const details = element.matches('details') ? element : element.querySelector('details');
-      setState(block, [details.dataset.aueResource]);
+    if (block && block.matches('.accordion, .accordion-cards')) {
+      const item = element.closest('li.accordion-item, section.accordion-cards-item');
+      if (item) setState(block, [item.dataset.aueResource]);
     }
 
     if (block && block.matches('.carousel')) {

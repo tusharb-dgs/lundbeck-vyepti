@@ -1,0 +1,350 @@
+@import url('./accordion-cards-tokens.css');
+
+.accordion-cards > .accordion-cards-sections { /* @libs */
+  display: flex; /* @libs */
+  flex-direction: column; /* @libs */
+}
+
+@media (width <= 767px) { /* @libs */
+  .accordion-cards { /* @libs */
+    padding-left: 0; /* @libs */
+    padding-right: 0; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-item-panel { /* @libs */
+    padding-left: 15px; /* @libs */
+    padding-right: 15px; /* @libs */
+  }
+}
+
+.accordion-cards .accordion-cards-item { /* @libs */
+  margin: 0; /* @libs */
+  padding: 0; /* @libs */
+  border: 0; /* @libs */
+}
+
+/* full-width gradient header bar */
+.accordion-cards .accordion-cards-item-header { /* @libs */
+  margin: var(--accordion-cards-section-gap) 0 0; /* @libs */
+  font-size: inherit; /* @libs */
+  font-weight: inherit; /* @libs */
+  line-height: inherit; /* @libs */
+}
+
+/* reset global button styles (pill radius, primary fill, etc.) */
+.accordion-cards .accordion-cards-item-trigger { /* @libs */
+  appearance: none; /* @libs */
+  display: flex; /* @libs */
+  align-items: flex-start; /* @libs */
+  justify-content: space-between; /* @libs */
+  width: 100%; /* @libs */
+  max-width: none; /* @libs */
+  margin: 0; /* @libs */
+  border: 0; /* @libs */
+  border-radius: 0; /* @libs */
+  padding: var(--accordion-cards-header-padding); /* @libs */
+  background-color: transparent; /* @libs */
+  background-image: var(--accordion-cards-header-bg); /* @libs */
+  color: var(--accordion-cards-header-color); /* @libs */
+  font-family: var(--heading-font-family); /* @libs */
+  font-size: var(--accordion-cards-header-font-size); /* @libs */
+  font-weight: var(--accordion-cards-header-font-weight); /* @libs */
+  line-height: var(--accordion-cards-header-line-height); /* @libs */
+  text-align: left; /* @libs */
+  text-decoration: none; /* @libs */
+  white-space: normal; /* @libs */
+  overflow: visible; /* @libs */
+  cursor: pointer; /* @libs */
+  transition: none; /* @libs */
+  outline: 0; /* @libs */
+}
+
+.accordion-cards .accordion-cards-item-trigger:hover,
+.accordion-cards .accordion-cards-item-trigger:focus { /* @libs */
+  background-color: transparent; /* @libs */
+  background-image: var(--accordion-cards-header-bg); /* @libs */
+  border-color: transparent; /* @libs */
+  color: var(--accordion-cards-header-color); /* @libs */
+}
+
+.accordion-cards .accordion-cards-item-title { /* @libs */
+  flex: 1; /* @libs */
+  padding: var(--accordion-cards-header-title-padding); /* @libs */
+  cursor: pointer; /* @libs */
+}
+
+.accordion-cards .accordion-cards-item-title p { /* @libs */
+  margin: 0; /* @libs */
+}
+
+/* chevron — points up when expanded, down when collapsed */
+.accordion-cards .accordion-cards-item-icon { /* @libs */
+  display: inline-flex; /* @libs */
+  flex-shrink: 0; /* @libs */
+  width: var(--accordion-cards-chevron-width); /* @libs */
+  height: var(--accordion-cards-chevron-height); /* @libs */
+  margin-top: var(--accordion-cards-chevron-margin-top-mobile); /* @libs */
+  margin-right: var(--accordion-cards-chevron-margin-right-mobile); /* @libs */
+  background: var(--accordion-cards-chevron-icon) no-repeat center / contain; /* @libs */
+  transform: rotate(180deg); /* @libs */
+  transform-origin: center; /* @libs */
+  transition: transform var(--accordion-cards-chevron-transition) ease-in-out; /* @libs */
+}
+
+.accordion-cards .accordion-cards-item.is-expanded .accordion-cards-item-icon { /* @libs */
+  transform: rotate(0deg); /* @libs */
+}
+
+@media (width >= 768px) { /* @libs */
+  .accordion-cards .accordion-cards-item-trigger { /* @libs */
+    align-items: center; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-item-icon { /* @libs */
+    margin-top: 0; /* @libs */
+    margin-right: var(--accordion-cards-chevron-margin-right-desktop); /* @libs */
+  }
+}
+
+/* expandable panel */
+.accordion-cards .accordion-cards-item-panel { /* @libs */
+  display: none; /* @libs */
+  margin-top: var(--accordion-cards-panel-margin-top); /* @libs */
+  cursor: default; /* @libs */
+}
+
+.accordion-cards .accordion-cards-item.is-expanded .accordion-cards-item-panel { /* @libs */
+  display: block; /* @libs */
+  margin-bottom: -8px; /* @libs */
+}
+
+/* optional intro copy above the card columns */
+.accordion-cards .accordion-cards-item-intro { /* @libs */
+  margin: 0 0 var(--accordion-cards-card-spacing); /* @libs */
+  padding: 10px 15px 32px; /* @libs */
+  color: var(--accordion-cards-body-color); /* @libs */
+  font-size: var(--accordion-cards-body-font-size); /* @libs */
+  line-height: 20px; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards .accordion-cards-item-intro p { /* @libs */
+  margin: 0; /* @libs */
+}
+
+@media (width >= 768px) { /* @libs */
+  .accordion-cards .accordion-cards-item-intro { /* @libs */
+    margin-top: -13px; /* @libs */
+    margin-bottom: 0; /* @libs */
+    padding: 0 0 48px 15px; /* @libs */
+    text-align: left; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-item-intro p { /* @libs */
+    padding-left: 14px; /* @libs */
+  }
+}
+
+/* left / right card columns */
+.accordion-cards .accordion-cards-columns { /* @libs */
+  display: grid; /* @libs */
+  grid-template-columns: 1fr; /* @libs */
+  gap: var(--accordion-cards-grid-gap); /* @libs */
+}
+
+@media (width >= 992px) { /* @libs */
+  .accordion-cards .accordion-cards-columns { /* @libs */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* @libs */
+  }
+}
+
+.accordion-cards .accordion-cards-column { /* @libs */
+  display: flex; /* @libs */
+  flex-direction: column; /* @libs */
+}
+
+/* resource card — image left, content right */
+.accordion-cards .accordion-cards-card { /* @libs */
+  margin-bottom: var(--accordion-cards-card-spacing); /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-image { /* @libs */
+  margin-bottom: 16px; /* @libs */
+  text-align: center; /* @libs */
+  line-height: 0; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-image img { /* @libs */
+  max-width: var(--accordion-cards-image-max-width); /* @libs */
+  width: 100%; /* @libs */
+  height: auto; /* @libs */
+  vertical-align: bottom; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-content { /* @libs */
+  display: flex; /* @libs */
+  flex-direction: column; /* @libs */
+  align-items: center; /* @libs */
+  min-width: 0; /* @libs */
+  text-align: center; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-content p { /* @libs */
+  margin: 0 0 8px; /* @libs */
+  color: var(--accordion-cards-body-color); /* @libs */
+  font-size: var(--accordion-cards-body-font-size); /* @libs */
+  line-height: var(--accordion-cards-body-line-height); /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-title { /* @libs */
+  margin: 0 0 8px; /* @libs */
+  color: var(--accordion-cards-title-color); /* @libs */
+  font-size: var(--accordion-cards-title-font-size); /* @libs */
+  font-weight: 700; /* @libs */
+  line-height: var(--accordion-cards-title-line-height); /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-content > h3:first-child { /* @libs */
+  margin-top: 0; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-content p a { /* @libs */
+  color: var(--accordion-cards-link-color); /* @libs */
+  line-height: var(--accordion-cards-body-line-height); /* @libs */
+  font-size: inherit; /* @libs */
+}
+
+/* tile-link style action row — matches live .tile-link */
+.accordion-cards .accordion-cards-card-actions { /* @libs */
+  display: block; /* @libs */
+  width: 100%; /* @libs */
+  margin: 0; /* @libs */
+  line-height: var(--accordion-cards-link-line-height); /* @libs */
+  text-align: center; /* @libs */
+}
+
+/* download+icon / email+icon are one link — hover changes both */
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link { /* @libs */
+  display: inline-flex; /* @libs */
+  align-items: center; /* @libs */
+  gap: 10px; /* @libs */
+  margin: 0; /* @libs */
+  padding: 0; /* @libs */
+  border: 0; /* @libs */
+  border-radius: 0; /* @libs */
+  background: none; /* @libs */
+  color: var(--accordion-cards-link-color); /* @libs */
+  font-size: var(--accordion-cards-link-font-size); /* @libs */
+  font-weight: var(--accordion-cards-link-font-weight); /* @libs */
+  line-height: var(--accordion-cards-link-line-height); /* @libs */
+  text-decoration: none; /* @libs */
+  white-space: nowrap; /* @libs */
+  vertical-align: middle; /* @libs */
+  cursor: pointer; /* @libs */
+  transition: color 0.2s ease-in-out; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link + .accordion-cards-action-link { /* @libs */
+  margin-left: 52px; /* @libs */
+  gap: 9px; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:hover,
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:focus { /* @libs */
+  color: var(--accordion-cards-link-hover-color); /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon { /* @libs */
+  display: inline-block; /* @libs */
+  flex-shrink: 0; /* @libs */
+  background-color: currentcolor; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon img { /* @libs */
+  display: none; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="download"] { /* @libs */
+  position: relative; /* @libs */
+  top: 5px; /* @libs */
+  width: 18px; /* @libs */
+  height: 19px; /* @libs */
+  mask: url("/icons/icon-download.svg") no-repeat center / contain; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="mail"] { /* @libs */
+  width: 19px; /* @libs */
+  height: 11px; /* @libs */
+  mask: url("/icons/icon-mail.svg") no-repeat center / contain; /* @libs */
+}
+
+@media (width >= 768px) { /* @libs */
+  .accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="mail"] { /* @libs */
+    width: 20px; /* @libs */
+    height: 11px; /* @libs */
+  }
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="forward"] { /* @libs */
+  width: 20px; /* @libs */
+  height: 8px; /* @libs */
+  mask: url("/icons/icon-forward-arrow.svg") no-repeat center / contain; /* @libs */
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="sign"] { /* @libs */
+  position: relative; /* @libs */
+  top: 4px; /* @libs */
+  width: 20px; /* @libs */
+  height: 20px; /* @libs */
+  mask: url("/icons/icon-sign.svg") no-repeat center / contain; /* @libs */
+}
+
+@media (width >= 768px) { /* @libs */
+  .accordion-cards .accordion-cards-card { /* @libs */
+    display: grid; /* @libs */
+    grid-template-columns: 36% 64%; /* @libs */
+    align-items: start; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-image { /* @libs */
+    grid-column: 1; /* @libs */
+    grid-row: 1; /* @libs */
+    margin-bottom: 0; /* @libs */
+    text-align: left; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-image img { /* @libs */
+    padding-left: 40px; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-content { /* @libs */
+    grid-column: 2; /* @libs */
+    grid-row: 1; /* @libs */
+    align-items: flex-start; /* @libs */
+    text-align: left; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-content p { /* @libs */
+    text-align: left; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-actions { /* @libs */
+    text-align: left; /* @libs */
+  }
+}
+
+@media (width >= 768px) and (width <= 991px) { /* @libs */
+  .accordion-cards .accordion-cards-card { /* @libs */
+    grid-template-columns: 30% 70%; /* @libs */
+  }
+}
+
+@media (width >= 992px) and (width <= 1199px) { /* @libs */
+  .accordion-cards .accordion-cards-card-image { /* @libs */
+    text-align: center; /* @libs */
+  }
+
+  .accordion-cards .accordion-cards-card-image img { /* @libs */
+    padding-left: 0; /* @libs */
+  }
+}

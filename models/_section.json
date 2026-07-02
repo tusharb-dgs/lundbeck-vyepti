@@ -60,6 +60,7 @@
       "id": "section",
       "components": [
         "accordion",
+        "accordion-cards",
         "button",
         "cards",
         "carousel",
