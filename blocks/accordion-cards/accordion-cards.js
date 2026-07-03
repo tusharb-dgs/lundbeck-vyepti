@@ -62,8 +62,34 @@ function isDownloadActionLink(anchor) {
   }
 }
 
+// Resolves an anchor's href against the current page; null if it can't be parsed.
+function getActionUrl(anchor) {
+  try {
+    return new URL(anchor.href, window.location.href);
+  } catch {
+    return null;
+  }
+}
+
+// A "navigation" action goes somewhere real: an external URL, or an internal page
+// with an actual path. Sign-up (/stay-connected) and find-a-location (/vyepti-locator)
+// are navigation links. Placeholder hrefs (#, /, /modal, /modals/*) are NOT navigation.
+function isNavigationActionLink(anchor) {
+  const url = getActionUrl(anchor);
+  if (!url || !url.protocol.startsWith('http')) return false;
+  let path = url.pathname;
+  while (path.endsWith('/')) path = path.slice(0, -1);
+  const isPlaceholder = path === '' || /^\/modals?\b/i.test(path);
+  if (isPlaceholder && url.origin === window.location.origin) return false;
+  return true;
+}
+
+// The email action is whatever action link is left after excluding the ones that go
+// somewhere real: downloads (files) and navigation links (sign-up, find-a-location).
+// This avoids hardcoding the "Email" label or a specific icon name, so the visible
+// text is free-form — only the placeholder href identifies it as the modal trigger.
 function isEmailActionLink(anchor) {
-  return /^email$/i.test(getActionLinkLabel(anchor));
+  return !isDownloadActionLink(anchor) && !isNavigationActionLink(anchor);
 }
 
 function buildActionLink(anchor) {
@@ -404,6 +430,8 @@ function scheduleAccordionCardsScroll(header) {
 /* eslint-disable secure-coding/no-hardcoded-credentials -- 'email' class names and labels, not secrets */
 const PRIVACY_POLICY_PATH = '/us/privacy-policy';
 const PRIVACY_POLICY_HOST = 'https://www.lundbeck.com';
+// This block loads the fragment only as a copy source (via loadFragment/fetch); it
+// never renders a link to it, so scripts.js autolinkModals won't auto-open it here.
 const EMAIL_MODAL_FRAGMENT_PATH = '/modals/email';
 
 // Default copy — used as-is until an author overrides it in the /modals/email fragment.
