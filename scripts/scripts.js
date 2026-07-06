@@ -197,6 +197,25 @@ function a11yLinks(main) {
 }
 
 /**
+ * Opens links to PDF documents in a new tab.
+ * @param {HTMLElement} main The main container element
+ */
+export function decoratePdfLinks(main) {
+  main.querySelectorAll('a[href]').forEach((link) => {
+    let pathname;
+    try {
+      ({ pathname } = new URL(link.href, window.location.href));
+    } catch {
+      return;
+    }
+    if (/\.pdf$/i.test(pathname)) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+  });
+}
+
+/**
  * Decorates formatted links to style them as buttons.
  * @param {HTMLElement} main The main container element
  */
@@ -985,6 +1004,7 @@ export function decorateMain(main) {
   decorateNestedSections(main);
   decorateButtons(main);
   a11yLinks(main);
+  decoratePdfLinks(main);
   decorateSpanTags(main);
 }
 

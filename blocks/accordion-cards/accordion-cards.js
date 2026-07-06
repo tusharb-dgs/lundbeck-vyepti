@@ -1,4 +1,4 @@
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, decorateButtons } from '../../scripts/scripts.js';
 
 function getScrollOffset() {
   const value = getComputedStyle(document.documentElement)
@@ -28,11 +28,11 @@ function isActionParagraph(node) {
   return strip(node.textContent) === strip(anchors.map((a) => a.textContent).join(' '));
 }
 
-// Collects the trailing run of action-link paragraphs into a single actions row and
-// gives each link the .button class (matching what decorateButtons would produce for a
-// bold link — done here too so it also works when links share one paragraph). An
-// authored /modals/… link is still auto-opened as a modal by the global autolinkModals
-// handler; the button chrome is overridden to the plain text-link + icon style in CSS.
+// Collects the trailing run of action-link paragraphs into a single actions row. When a
+// link is authored as bold, decorateButtons (invoked early in decorate) has already given
+// it the .button class; here we only tag it as an action link. An authored /modals/… link
+// is still auto-opened as a modal by the global autolinkModals handler; the button chrome
+// is overridden to the plain text-link + icon style in CSS.
 function normalizeActionLinks(contentCol) {
   const children = [...contentCol.children];
   const actionParagraphs = [];
@@ -50,12 +50,7 @@ function normalizeActionLinks(contentCol) {
   actions.className = 'accordion-cards-card-actions';
   actionParagraphs.forEach((paragraph) => {
     paragraph.querySelectorAll('a').forEach((anchor) => {
-      anchor.classList.add('button', 'accordion-cards-action-link');
-      // download/PDF links open in a new tab, matching the original site
-      if (/\.pdf$/i.test(new URL(anchor.href, window.location.href).pathname)) {
-        anchor.target = '_blank';
-        anchor.rel = 'noopener noreferrer';
-      }
+      anchor.classList.add('accordion-cards-action-link');
       actions.append(anchor);
     });
   });
@@ -302,6 +297,11 @@ function scheduleAccordionCardsScroll(header) {
 }
 
 export default function decorate(block) {
+  // Buttonize authored links up front: a bold action link already carries the .button
+  // class after this, so normalizeActionLinks only needs to tag and collect them.
+  // Idempotent, and also covers the Universal Editor re-decoration path.
+  decorateButtons(block);
+
   const wrapper = document.createElement('div');
   wrapper.className = 'accordion-cards-sections';
 
