@@ -18,9 +18,8 @@
   --header-font-size-m: 18px;
   --header-padding-container: 15px;
 
-  /* dropdown: offset from the trigger's top so the panel opens just below the
-     label text — matches the live vyepti.com value (35px) for visual parity. */
-  --header-dropdown-top: 35px;
+  /* dropdown: opens flush with the bottom edge of the header bar */
+  --header-dropdown-top: 100%;
 
   /* dropdown: transparent hover bridge that keeps the pointer within the
      trigger while travelling down into the submenu (prevents hover loss) */
