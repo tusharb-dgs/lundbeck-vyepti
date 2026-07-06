@@ -1,19 +1,17 @@
 /* tabs design tokens */
-:root { /* @boilerplate */
+:root {
   --tabs-panel-padding: var(--spacing-m); /* @boilerplate */
   --tabs-border-width: var(--border-width-s); /* @boilerplate */
   --tabs-border-color: var(--border-color); /* @boilerplate */
   --tabs-transition-duration: var(--transition-duration); /* @boilerplate */
-}
 
-/*
- * "prepare-tabs" variant — the framed "Prepare for each step" card from
- * vyepti.com/what-to-expect. Applied as a Section Style so the framed card can
- * wrap both the heading (pink bar) and the tabs block (white body). The tab
- * icons are supplied here by position because the boilerplate tabs.js renders
- * each tab label as plain text, discarding any authored markup.
- */
-:root {
+  /*
+   * "prepare-tabs" variant — the framed "Prepare for each step" card from
+   * vyepti.com/what-to-expect. Applied as a Section Style so the framed card can
+   * wrap both the heading (pink bar) and the tabs block (white body). The tab
+   * icons are supplied here by position because the boilerplate tabs.js renders
+   * each tab label as plain text, discarding any authored markup.
+   */
   --tabs-prepare-card-radius: 12px;
   --tabs-prepare-card-shadow: 0 2px 8px #e0e0e0;
   --tabs-prepare-header-bg: var(--brand-rose);
