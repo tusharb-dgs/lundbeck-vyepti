@@ -5,16 +5,23 @@ const SCROLL_DURATION_TOKEN = 'accordion-cards-scroll-duration';
 const SCROLL_OFFSET_FALLBACK = 40;
 const SCROLL_DURATION_FALLBACK = 500;
 
-// An action paragraph holds an authored action link. Authors mark these links bold, so
-// the global decorateButtons() has already turned them into <p.button-wrapper><a.button>
-// before this block runs.
+// An action paragraph is a trailing paragraph made up only of links (Download, Email,
+// etc.) — its visible text is exactly its links' text, ignoring icon tokens/whitespace.
+// This distinguishes an action row from a body paragraph that merely contains an inline
+// link (e.g. the "Doctor Discussion Guide" sentence).
 function isActionParagraph(node) {
-  return node instanceof Element && node.matches('p') && !!node.querySelector('a.button');
+  if (!(node instanceof Element) || !node.matches('p')) return false;
+  const anchors = [...node.querySelectorAll('a')];
+  if (!anchors.length) return false;
+  const strip = (s) => s.replace(/:icon-[a-z0-9-]+:/gi, '').replace(/\s+/g, ' ').trim();
+  return strip(node.textContent) === strip(anchors.map((a) => a.textContent).join(' '));
 }
 
-// Collects the trailing run of action-link paragraphs into a single actions row. The
-// links keep their .button class (an authored /modals/… link is auto-opened as a modal
-// by the global autolinkModals handler); styling is handled in CSS.
+// Collects the trailing run of action-link paragraphs into a single actions row and
+// gives each link the .button class (matching what decorateButtons would produce for a
+// bold link — done here too so it also works when links share one paragraph). An
+// authored /modals/… link is still auto-opened as a modal by the global autolinkModals
+// handler; the button chrome is overridden to the plain text-link + icon style in CSS.
 function normalizeActionLinks(contentCol) {
   const children = [...contentCol.children];
   const actionParagraphs = [];
@@ -31,8 +38,8 @@ function normalizeActionLinks(contentCol) {
   const actions = document.createElement('div');
   actions.className = 'accordion-cards-card-actions';
   actionParagraphs.forEach((paragraph) => {
-    paragraph.querySelectorAll('a.button').forEach((anchor) => {
-      anchor.classList.add('accordion-cards-action-link');
+    paragraph.querySelectorAll('a').forEach((anchor) => {
+      anchor.classList.add('button', 'accordion-cards-action-link');
       actions.append(anchor);
     });
   });

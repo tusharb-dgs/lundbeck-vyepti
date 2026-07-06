@@ -136,15 +136,23 @@ main .form-email .form-email-success-text {
 
 /* When authored as a /modals/… link the global autolinkModals handler opens the
    fragment in the shared modal; style that popup to host the form-email block
-   (matches vyepti.com/downloadable-resources). */
+   (matches vyepti.com/downloadable-resources). The dialog sizes to its content —
+   overriding the boilerplate max-height/internal scroll so nothing is clipped;
+   it only scrolls as a fallback when the viewport is shorter than the form. */
 .modal:has(.form-email) dialog {
   width: min(535px, calc(100vw - 30px));
   max-width: 535px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  border: 0;
+  border-radius: 10px;
   background: var(--card-bg-light, #eff6f9);
   color: var(--text-color);
 }
 
 .modal:has(.form-email) dialog .modal-content {
+  max-height: none;
+  overflow-y: visible;
   padding: 0 20px 32px;
   margin-top: 0;
 }
