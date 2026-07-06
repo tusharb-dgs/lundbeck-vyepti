@@ -40,6 +40,11 @@ function normalizeActionLinks(contentCol) {
   actionParagraphs.forEach((paragraph) => {
     paragraph.querySelectorAll('a').forEach((anchor) => {
       anchor.classList.add('button', 'accordion-cards-action-link');
+      // download/PDF links open in a new tab, matching the original site
+      if (/\.pdf$/i.test(new URL(anchor.href, window.location.href).pathname)) {
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
+      }
       actions.append(anchor);
     });
   });
