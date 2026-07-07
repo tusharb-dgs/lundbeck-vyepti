@@ -42,6 +42,38 @@
           "label": "Background Image",
           "description": "Background image of the section, displayed on top of the background color if specified",
           "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "background-image-2",
+          "label": "Background Image (768px+)",
+          "description": "Art-direction rendition shown at viewports 768px and wider",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "background-image-3",
+          "label": "Background Image (992px+)",
+          "description": "Art-direction rendition shown at viewports 992px and wider",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "background-image-4",
+          "label": "Background Image (1200px+)",
+          "description": "Art-direction rendition shown at viewports 1200px and wider",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "background-image-5",
+          "label": "Background Image (1600px+)",
+          "description": "Art-direction rendition shown at viewports 1600px and wider",
+          "multi": false
         }
       ]
     }

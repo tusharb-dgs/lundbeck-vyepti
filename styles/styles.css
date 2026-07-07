@@ -569,6 +569,44 @@ main > .section { /* @libs */
   margin: 0; /* @libs */
 }
 
+main > .section > div:not(.bg-image) { /* @boilerplate */
+  margin: auto; /* @boilerplate */
+  padding: 0 var(--spacing-m); /* @boilerplate */
+}
+
+/* Section metadata: background image sits behind content */
+main > .section:has(> .bg-image) { /* @boilerplate */
+  position: relative; /* @boilerplate */
+  overflow: hidden; /* @boilerplate */
+}
+
+main > .section:has(> .bg-image) > div:not(.bg-image) { /* @boilerplate */
+  position: relative; /* @boilerplate */
+  z-index: 1; /* @boilerplate */
+}
+
+main > .section > .bg-image { /* @boilerplate */
+  position: absolute; /* @boilerplate */
+  inset: 0; /* @boilerplate */
+  z-index: 0; /* @boilerplate */
+  pointer-events: none; /* @boilerplate */
+}
+
+main > .section > .bg-image picture,
+main > .section > .bg-image img { /* @boilerplate */
+  display: block; /* @boilerplate */
+  width: 100%; /* @boilerplate */
+  height: 100%; /* @boilerplate */
+}
+
+main > .section > .bg-image img { /* @boilerplate */
+  object-fit: cover; /* @boilerplate */
+}
+
+main > .section:first-of-type { /* @boilerplate */
+  margin-top: 0; /* @boilerplate */
+}
+
 main > .section.divider > div:last-child { /* @libs */
   border-bottom: var(--section-divider-width) solid var(--section-divider-color); /* @libs */
   padding-bottom: var(--section-padding);
@@ -697,8 +735,8 @@ main .section.dark a.button.secondary:focus { /* @libs */
      centered with margin auto: <576 fluid, 576+ = 540, 768+ = 720,
      992+ = 960, 1200+ = 1140 (Bootstrap container widths), each with 15px gutters. */
 main .section.stats-callout {
-  max-width: 100%;
-  margin: 0;
+  max-width: var(--max-width-site); /* @boilerplate */
+  margin: auto;
   background-image: linear-gradient(180deg, #e8f3f5 20%, #fff 53%, #fff 100%);
   border-radius: 23px 23px 0 0;
   padding: var(--section-padding-vertical) 15px;

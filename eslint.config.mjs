@@ -269,6 +269,7 @@ export default [
         section: 30, // section is a key-value block and over 4 is OK
         'section-title': 10, // title, types, sizes, alignment, tone, subtitle fields
         'carousel-item': 6,
+        'hero': 6,
       }],
       'xwalk/no-custom-resource-types': 0, // da won't have them
       // it's 2026, we can afford to have longer lines
