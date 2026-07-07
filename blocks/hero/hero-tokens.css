@@ -85,6 +85,11 @@
   --hero-teaser-heading-color: var(--brand-primary);
   --hero-teaser-caption-color: var(--hero-text-color-light);
 
+  /* banner height (background image is absolute, so the panel needs an explicit
+     height); tracks the source sub-banner proportions per breakpoint. */
+  --hero-teaser-min-height: 200px;
+  --hero-teaser-min-height-desktop: 240px;
+
   /* z-index layers */
   --hero-z-bg: 0;
   --hero-z-content: 1;
@@ -93,51 +98,49 @@
 
 /* ═══════════════════════════════════════════════════
    TEASER VARIANT (.hero.teaser) — non-homepage sub-banner
-   Mirrors the single-dark layout (image in flow drives height; container-
-   centred overlay, vertically centred at desktop) with a dark eyebrow, teal
-   headline and left-aligned text per vyepti.com .teaser.sub-banner-teaser.
+   The unmodified hero decorator renders a single dual-panel (.hero-panels >
+   .hero-panel-dark) with a background image, an actor-portrayal caption and a
+   .hero-panel-content overlay. These rules restyle that dual-panel markup into
+   the vyepti.com .teaser.sub-banner-teaser look: full-bleed background image,
+   container-centred + left-aligned overlay, dark eyebrow, teal headline.
+   Colours/fonts come from global tokens; layout reuses the single-* container
+   width tokens. Height is provided by .hero-panel's min-height (no collapse).
    ═══════════════════════════════════════════════════ */
 
-.hero.teaser {
-  position: relative;
-  display: block;
-  overflow: hidden;
+/* Panel provides the banner height (background image is absolute) */
+.hero.teaser .hero-panel {
+  min-height: var(--hero-teaser-min-height);
 }
 
-.hero.teaser > div:first-child {
-  position: relative;
+/* Background image fills the panel */
+.hero.teaser .hero-panel-bg {
+  position: absolute;
+  inset: 0;
   z-index: var(--hero-z-bg);
 }
 
-.hero.teaser > div:first-child > div,
-.hero.teaser > div:first-child p {
+.hero.teaser .hero-panel-bg img {
   width: 100%;
-  margin: 0;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
-/* Image drives height: width:100% + height:auto = intrinsic ratio per breakpoint */
-.hero.teaser img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* Content overlay — container-centred, left-aligned text */
-.hero.teaser > div:last-of-type {
-  position: absolute;
-  top: 5.5%;
-  z-index: var(--hero-z-content);
-  box-sizing: border-box;
+/* Overlay — container-centred box, left-aligned text (overrides the shared
+   .hero-panel-content centring) */
+.hero.teaser .hero-panel-content {
   max-width: var(--hero-single-content-max-width);
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  padding: 24px 15px;
   align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+}
+
+.hero.teaser .hero-panel-description {
+  width: 100%;
+  max-width: 100%;
   text-align: left;
 }
 
@@ -164,7 +167,7 @@
   text-align: left;
 }
 
-/* Actor portrayal caption — white, bottom-right (matches single-dark) */
+/* Actor portrayal caption — white, bottom-right */
 .hero.teaser .actor-portrayal {
   position: absolute;
   right: 20px;
@@ -177,31 +180,11 @@
   font-weight: 400;
 }
 
-@media (width >= 600px) {
-  .hero.teaser > div:last-of-type {
-    justify-content: center;
-  }
-
-  .hero.teaser h1 {
-    padding-bottom: 24px;
-  }
-}
-
 @media (width >= 768px) {
-  /* Teaser desktop — mirror single-dark: image-driven height, container-centred
-     overlay vertically centred, larger left-aligned type. */
-  .hero.teaser {
-    aspect-ratio: auto;
-    min-height: 0;
-  }
-
-  .hero.teaser > div:last-of-type {
-    max-width: 720px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding-right: 15px;
-    padding-left: 15px;
+  /* Restore an explicit banner height — the shared dual-panel rule sets
+     .hero-panel min-height:0 at desktop (panels normally stretch to row). */
+  .hero.teaser .hero-panel {
+    min-height: var(--hero-teaser-min-height-desktop);
   }
 
   .hero.teaser h3 {
@@ -210,32 +193,28 @@
 
   .hero.teaser h1 {
     font-size: var(--hero-single-heading-font-size-m);
-    margin: 0;
-    padding: 0 0 16px;
     width: 60%;
-    text-align: left;
   }
 
   .hero.teaser .actor-portrayal {
     right: 40px;
-    bottom: 20px;
   }
 }
 
 @media (width >= 992px) {
+  .hero.teaser .hero-panel-content {
+    max-width: 960px;
+  }
+
   .hero.teaser h1 {
     font-size: 42px;
     line-height: 48px;
     width: 70%;
   }
-
-  .hero.teaser > div:last-of-type {
-    max-width: 960px;
-  }
 }
 
 @media (width >= 1200px) {
-  .hero.teaser > div:last-of-type {
+  .hero.teaser .hero-panel-content {
     max-width: 1140px;
   }
 
@@ -243,6 +222,5 @@
     font-size: var(--hero-single-heading-font-size-desktop);
     line-height: 60px;
     width: 60%;
-    padding-left: 0;
   }
 }
