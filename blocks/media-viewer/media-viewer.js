@@ -43,6 +43,10 @@ export default function decorate(block) {
     });
   }
 
+  // Check URL parameters once
+  const urlParams = new URLSearchParams(window.location.search);
+  let matchedIndex = 0; // Fallback default to the first item (index 0)
+
   // 2. Map data items
   for (let i = startingIndex; i < rows.length; i++) {
     const cells = [...rows[i].children];
@@ -52,6 +56,9 @@ export default function decorate(block) {
       const imageEl = cells[2].querySelector('img');
       const videoLinkEl = cells[3]?.querySelector('a') || cells[3];
       const isFeatured = cells[4]?.textContent.trim().toLowerCase() === 'true';
+      
+      // Target the 6th column (index 5) for the query parameter name
+      const queryParamName = cells[5]?.textContent.trim() || '';
       
       let videoId = null;
       if (videoLinkEl) {
@@ -66,6 +73,7 @@ export default function decorate(block) {
       const rawText = tempDiv.textContent || tempDiv.innerText;
       const textSnippet = rawText.length > 65 ? `${rawText.substring(0, 65)}...` : rawText;
 
+      const itemIndex = items.length;
       items.push({
         title,
         fullText,
@@ -75,6 +83,11 @@ export default function decorate(block) {
         videoId,
         isFeatured,
       });
+
+      // If the parameter text matches a key in the URL, flag this index as matched
+      if (queryParamName && urlParams.has(queryParamName)) {
+        matchedIndex = itemIndex;
+      }
     }
   }
 
@@ -137,7 +150,6 @@ export default function decorate(block) {
   listSection.className = 'mv-list-section';
 
   items.forEach((item) => {
-    // const card = document.createElement('button');
     const card = document.createElement('div');
 
     card.className = 'mv-card';
@@ -203,8 +215,16 @@ export default function decorate(block) {
 
   block.append(viewSection, listSection);
 
+  // Initialize the viewer based on the matched URL index instead of always defaulting to 0
   if (items.length > 0) {
-    updateViewer(items[0]);
-    listSection.children[0].classList.add('is-active');
+    updateViewer(items[matchedIndex]);
+    listSection.children[matchedIndex].classList.add('is-active');
+    
+    // Smooth scroll to the main viewer if a deep-link query parameter match was triggered
+    if (matchedIndex > 0) {
+      setTimeout(() => {
+        viewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
   }
 }
