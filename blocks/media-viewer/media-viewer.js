@@ -205,6 +205,8 @@ export default function decorate(block) {
     card.append(cardInner);
 
     card.addEventListener('click', () => {
+      document.querySelector('.mv-view-section').style.display = 'block';
+
       block.querySelectorAll('.mv-card').forEach(c => c.classList.remove('is-active'));
       card.classList.add('is-active');
       updateViewer(item);

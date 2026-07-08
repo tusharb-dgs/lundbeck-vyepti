@@ -32,7 +32,7 @@ body .media-viewer .mv-view-section {
   margin-left: -50vw;
   margin-right: -50vw;
   background-color: var(--mv-view-bg, #f0f7fa);
-  display: block;
+  /* display: block; */
   box-sizing: border-box;
 }
 
@@ -307,4 +307,9 @@ body .media-viewer .mv-card-content p {
     padding-left: var(--mv-list-padding-xs-x, 1.25rem);
     padding-right: var(--mv-list-padding-xs-x, 1.25rem);
   }
+}
+
+.mv-view-section {
+  display: none;
+
 }
