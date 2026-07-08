@@ -176,6 +176,16 @@
   src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial'); /* @libs */
 }
 
+/* Extra-bold (800) headings had no fallback face, so weight 800 fell back to a
+   synthesized bold ~20% wider than Proxima Nova ExtraBold — changing headline
+   wrap points. size-adjust matches the fallback's width to the real font. */
+@font-face {
+  font-family: proxima-nova-fallback;
+  font-weight: 800;
+  size-adjust: 84%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial');
+}
+
 body { /* @libs */
   display: none; /* @libs */
   margin: 0; /* @libs */
