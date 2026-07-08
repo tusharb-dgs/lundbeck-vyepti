@@ -6,7 +6,7 @@
 
   /* colors */
   --hero-text-color-light: #fff;
-  --hero-text-shadow: 0 1px 3px rgb(0 0 0 / 60%)
+  --hero-text-shadow: 0 1px 3px rgb(0 0 0 / 60%);
 
   /* eyebrow (h3) */
   --hero-eyebrow-font-size: 20px;
@@ -85,6 +85,10 @@
   --hero-teaser-heading-color: var(--brand-primary);
   --hero-teaser-caption-color: var(--hero-text-color-light);
 
+  /* mobile overlay top offset (% of image-driven banner height) — text sits over
+     the sky with the subjects visible below, matching the source composition */
+  --hero-teaser-content-top-mobile: 10.5%;
+
   /* banner height (background image is absolute, so the panel needs an explicit
      height); tracks the source sub-banner proportions per breakpoint. */
   --hero-teaser-min-height: 200px;
@@ -98,70 +102,101 @@
 
 /* ═══════════════════════════════════════════════════
    TEASER VARIANT (.hero.teaser) — non-homepage sub-banner
-   The unmodified hero decorator renders a single dual-panel (.hero-panels >
-   .hero-panel-dark) with a background image, an actor-portrayal caption and a
-   .hero-panel-content overlay. These rules restyle that dual-panel markup into
-   the vyepti.com .teaser.sub-banner-teaser look: full-bleed background image,
-   container-centred + left-aligned overlay, dark eyebrow, teal headline.
-   Colours/fonts come from global tokens; layout reuses the single-* container
-   width tokens. Height is provided by .hero-panel's min-height (no collapse).
+   The hero decorator renders this authored single-cell content as a single
+   panel (.hero.teaser.single): an image row (> div:first-child) and a text row
+   (> div:last-of-type). These rules restyle that single-panel markup into the
+   vyepti.com .teaser.sub-banner-teaser look:
+     • Mobile — image is in normal flow so its intrinsic height drives the banner
+       (~363px at 390px wide); the text overlay is absolutely positioned over the
+       sky near the top and centred, with the subjects visible below.
+     • 768px+ — image becomes a full-bleed absolute layer at an explicit banner
+       height; the overlay is container-centred, vertically centred and
+       left-aligned.
+   Dark eyebrow + teal headline; colours/fonts come from global tokens.
    ═══════════════════════════════════════════════════ */
 
-/* Min-height floor; on mobile the in-flow image drives the actual (taller)
-   height to match the source sub-banner. */
-.hero.teaser .hero-panel {
-  min-height: var(--hero-teaser-min-height);
+/* Image-driven height on mobile — cancel the legacy .hero.single fixed
+   min-height so the in-flow image sets the banner height. */
+.hero.teaser.single {
+  min-height: 0;
 }
 
-/* Mobile: background image stays in normal flow so its intrinsic height drives
-   the banner. It becomes an absolute full-bleed layer at 768px+. */
-.hero.teaser .hero-panel-bg {
-  inset: 0;
+/* Image row stays in normal flow (overrides .hero.single absolute inset:0). */
+.hero.teaser.single > div:first-child {
+  position: relative;
   z-index: var(--hero-z-bg);
 }
 
-.hero.teaser .hero-panel-bg img {
+/* Neutralise the legacy .hero.single height:100% on the image wrappers so the
+   in-flow image's intrinsic height drives the banner on mobile. */
+.hero.teaser.single > div:first-child > div,
+.hero.teaser.single > div:first-child p {
+  height: auto;
+}
+
+.hero.teaser.single img {
   width: 100%;
   height: auto;
   object-fit: cover;
   object-position: center;
 }
 
-/* Overlay — container-centred box. Text is centred on mobile (matching the
-   source) and switches to left-aligned at 768px+. */
-.hero.teaser .hero-panel-content {
-  max-width: var(--hero-single-content-max-width);
-  margin-right: auto;
-  margin-left: auto;
-  padding: 24px 15px;
+/* The single-panel path leaves the 5 responsive renditions as separate
+   <picture> elements (no JS consolidation), so show one per breakpoint —
+   otherwise all five stack and inflate the banner height. Order: mobile /
+   tablet / small-desktop / desktop / wide. */
+.hero.teaser.single > div:first-child picture {
+  display: none;
+}
+
+.hero.teaser.single > div:first-child picture:first-child {
+  display: block;
+}
+
+/* Text overlay — absolute over the image, top-anchored + centred on mobile
+   (overrides the legacy relative, bottom-anchored, min-height content row). */
+.hero.teaser.single > div:last-of-type {
+  position: absolute;
+  inset: var(--hero-teaser-content-top-mobile) 0 auto;
+  z-index: var(--hero-z-content);
+  min-height: 0;
+  padding: 0 15px;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
 }
 
-.hero.teaser .hero-panel-description {
-  width: 100%;
-  max-width: 100%;
-}
-
-/* Eyebrow (h3) — dark */
-.hero.teaser h3 {
+/* Eyebrow — dark. Targets both the legacy <h3> and the accessible bold <p>
+   the reviewer switched to (an <h3> above the <h1> is invalid heading order),
+   so the treatment holds regardless of which markup the page authors. */
+.hero.teaser h3,
+.hero.teaser.single > div:last-of-type p {
   color: var(--hero-teaser-eyebrow-color);
   font-family: var(--hero-font-family-display);
   font-size: var(--hero-teaser-eyebrow-font-size);
   font-weight: var(--hero-teaser-eyebrow-font-weight);
   line-height: var(--hero-teaser-eyebrow-line-height);
   margin: 0 0 var(--hero-eyebrow-gap);
+  text-align: center;
+}
+
+/* hero.js wraps bold text in span.accent-color (rose); keep the eyebrow dark. */
+.hero.teaser h3 .accent-color,
+.hero.teaser.single > div:last-of-type p .accent-color {
+  color: inherit;
+  font-weight: inherit;
 }
 
 /* Headline (h1) — teal */
 .hero.teaser h1 {
   color: var(--hero-teaser-heading-color);
   font-family: var(--hero-font-family-display);
-  font-size: var(--hero-single-heading-font-size-s);
+  font-size: var(--hero-single-heading-font-size-m);
   font-weight: var(--heading-font-weight);
   line-height: var(--hero-heading-line-height);
   margin: 0;
   max-width: 100%;
+  text-align: center;
 }
 
 /* Actor portrayal caption — white, bottom-right */
@@ -178,29 +213,38 @@
 }
 
 @media (width >= 768px) {
-  /* Restore an explicit banner height — the shared dual-panel rule sets
-     .hero-panel min-height:0 at desktop (panels normally stretch to row). */
-  .hero.teaser .hero-panel {
+  /* Explicit banner height; image becomes a full-bleed absolute layer. Cancel
+     the legacy .hero.single desktop aspect-ratio so min-height drives height. */
+  .hero.teaser.single {
+    aspect-ratio: auto;
     min-height: var(--hero-teaser-min-height-desktop);
   }
 
-  /* Background becomes a full-bleed absolute layer behind the overlay. */
-  .hero.teaser .hero-panel-bg {
+  .hero.teaser.single > div:first-child {
     position: absolute;
+    inset: 0;
   }
 
-  .hero.teaser .hero-panel-bg img {
+  .hero.teaser.single img {
     height: 100%;
   }
 
-  /* Overlay: vertically centred, left-aligned text. */
-  .hero.teaser .hero-panel-content {
-    justify-content: center;
-    align-items: flex-start;
-    text-align: left;
+  /* Swap to the tablet rendition. */
+  .hero.teaser.single > div:first-child picture:first-child {
+    display: none;
   }
 
-  .hero.teaser .hero-panel-description {
+  .hero.teaser.single > div:first-child picture:nth-child(2) {
+    display: block;
+  }
+
+  /* Overlay: container-centred, vertically centred, left-aligned. */
+  .hero.teaser.single > div:last-of-type {
+    inset: 0;
+    max-width: var(--max-width-site);
+    margin: 0 auto;
+    justify-content: center;
+    align-items: flex-start;
     text-align: left;
   }
 
@@ -221,8 +265,13 @@
 }
 
 @media (width >= 992px) {
-  .hero.teaser .hero-panel-content {
-    max-width: 960px;
+  /* Swap to the small-desktop rendition. */
+  .hero.teaser.single > div:first-child picture:nth-child(2) {
+    display: none;
+  }
+
+  .hero.teaser.single > div:first-child picture:nth-child(3) {
+    display: block;
   }
 
   .hero.teaser h1 {
@@ -233,8 +282,13 @@
 }
 
 @media (width >= 1200px) {
-  .hero.teaser .hero-panel-content {
-    max-width: 1140px;
+  /* Swap to the desktop rendition. */
+  .hero.teaser.single > div:first-child picture:nth-child(3) {
+    display: none;
+  }
+
+  .hero.teaser.single > div:first-child picture:nth-child(4) {
+    display: block;
   }
 
   .hero.teaser h1 {
