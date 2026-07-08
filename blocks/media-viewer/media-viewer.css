@@ -1,0 +1,310 @@
+@import url('./media-viewer-tokens.css');
+
+/* ═══════════════════════════════════════════════════
+   0. OVERRIDE AEM BOILERPLATE CONTAINERS
+   ═══════════════════════════════════════════════════ */
+body .section.media-viewer-container,
+body .section > div.media-viewer-wrapper {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Root Block Container Box */
+body .media-viewer-wrapper .media-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mv-section-gap, 3rem);
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════
+   1. VIEW SECTION (Centered Stacked Layout Engine)
+   ═══════════════════════════════════════════════════ */
+body .media-viewer .mv-view-section {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background-color: var(--mv-view-bg, #f0f7fa);
+  display: block;
+  box-sizing: border-box;
+}
+
+body .media-viewer .mv-view-content-box {
+  max-width: var(--mv-view-max-width, 760px); 
+  margin: 0 auto;
+  padding: var(--mv-view-padding, 4rem 2rem);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mv-view-gap, 1.5rem);
+}
+
+body .media-viewer .mv-view-title {
+  font-size: var(--mv-title-size, 1.6rem);
+  font-weight: var(--mv-weight-bold, 700);
+  color: var(--mv-text-primary, #2b2b2b);
+  margin: 0;
+  line-height: var(--mv-line-height-tight, 1.3);
+  text-align: left;
+}
+
+body .media-viewer .mv-view-text {
+  font-size: var(--mv-body-size, 1rem);
+  line-height: var(--mv-line-height-base, 1.5);
+  color: var(--mv-text-secondary, #333333);
+  text-align: left;
+}
+
+body .media-viewer .mv-view-text p {
+  margin: 0 0 var(--mv-paragraph-gap, 1.25rem) 0;
+}
+
+body .media-viewer .mv-view-text p:last-child {
+  margin-bottom: 0;
+}
+
+body .media-viewer .mv-view-media {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  width: 100%;
+  margin: var(--mv-media-margin-top, 1.5rem) auto 0 auto;          
+}
+
+body .media-viewer .mv-view-media img {
+  width: 100%;
+  max-width: var(--mv-view-media-max-width, 360px); 
+  height: auto;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;          
+  border-radius: var(--mv-radius-sm, 4px);
+  box-shadow: var(--mv-shadow-sm, 0 4px 16px rgba(0, 0, 0, 0.06));
+}
+
+body .media-viewer .mv-brightcove-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: var(--mv-video-max-width, 560px);        
+  margin: 0 auto;          
+  aspect-ratio: var(--mv-aspect-video, 16 / 9);
+  border-radius: var(--mv-radius-md, 8px);
+  overflow: hidden;
+  background-color: var(--mv-video-bg, #000000);
+  box-shadow: var(--mv-shadow-md, 0 6px 20px rgba(0, 0, 0, 0.1));
+}
+
+body .media-viewer .mv-brightcove-wrapper video-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════
+   2. LIST SECTION (Asymmetric Staggered Masonry Grid)
+   ═══════════════════════════════════════════════════ */
+body .media-viewer .mv-list-section {
+  max-width: calc(var(--mv-max-width) * 0.70); 
+  width: 70%;
+  margin: 0 auto; 
+  padding: var(--mv-list-padding, 2rem 0rem 5rem 0rem); 
+  columns: var(--mv-column-count, 3) var(--mv-column-min-width, 200px); 
+  column-gap: var(--mv-grid-gap);
+  box-sizing: border-box;
+}
+
+/* Grid Cards */
+body .media-viewer .mv-card {
+  display: inline-block;
+  break-inside: avoid;
+  width: 100%;
+  margin-bottom: var(--mv-grid-gap);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+body .media-viewer .mv-card-inner {
+  background: var(--mv-card-bg, #ffffff);
+  border: var(--mv-card-border, 1px solid #dcdcdc);
+  border-radius: var(--mv-radius-lg, 12px);
+  overflow: visible; 
+  position: relative;
+  box-sizing: border-box;
+  transition: transform var(--mv-transition-speed, 0.2s) ease, box-shadow var(--mv-transition-speed, 0.2s) ease;
+}
+
+body .media-viewer .mv-card:hover .mv-card-inner {
+  transform: translateY(var(--mv-hover-lift, -4px));
+  box-shadow: var(--mv-shadow-lg, 0 12px 24px rgba(0, 0, 0, 0.08));
+}
+
+/* ACTIVE SELECTED CARD STATE */
+body .media-viewer .mv-card.is-active .mv-card-inner {
+  border: var(--mv-active-border, 3px solid #d56161);
+  box-shadow: var(--mv-active-shadow, 0 4px 12px rgba(213, 97, 97, 0.2));
+}
+
+body .media-viewer .mv-card-media-wrap {
+  position: relative;
+  width: 100%;
+  background-color: var(--mv-card-media-bg, #f7fafc);
+  border-top-left-radius: var(--mv-radius-inner, 9px);
+  border-top-right-radius: var(--mv-radius-inner, 9px);
+  overflow: hidden; 
+}
+
+body .media-viewer .mv-card-media-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* ═══════════════════════════════════════════════════
+   3. BADGES & DECORATIVE GRAPHICS
+   ═══════════════════════════════════════════════════ */
+body .media-viewer .mv-star-ribbon {
+  position: absolute;
+  top: -1px;
+  left: 14px;
+  width: 28px;
+  height: 38px;
+  background-color: var(--mv-badge-purple, #8c469f);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  box-sizing: border-box;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);
+  z-index: 10;
+}
+
+body .media-viewer .mv-star-ribbon svg,
+body .media-viewer .mv-star-ribbon svg path {
+  width: 14px;
+  height: 14px;
+  fill: var(--mv-white, #ffffff);
+  display: block;
+}
+
+body .media-viewer .mv-duration-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--mv-overlay-dark, rgba(0, 0, 0, 0.65));
+  color: var(--mv-white, #ffffff);
+  padding: 3px 6px;
+  border-radius: var(--mv-radius-xs, 4px);
+  font-size: var(--mv-badge-text-size, 0.75rem);
+  font-weight: var(--mv-weight-semibold, 600);
+  z-index: 8;
+}
+
+body .media-viewer .mv-corner-badge {
+  position: absolute;
+  bottom: 12px; 
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50% ;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12; 
+  box-shadow: var(--mv-shadow-icon, 0 3px 6px rgba(0, 0, 0, 0.12));
+}
+
+body .media-viewer .mv-card .mv-corner-badge {
+  background-color: var(--mv-badge-coral, #eb6e6e);
+}
+
+body .media-viewer .mv-card .mv-corner-badge svg.icon-quote,
+body .media-viewer .mv-card .mv-corner-badge svg.icon-quote path {
+  width: 16px;
+  height: 16px;
+  fill: var(--mv-white, #ffffff);
+  display: block;
+}
+
+body .media-viewer .mv-video-card .mv-corner-badge {
+  background-color: var(--mv-badge-teal, #00607a);
+  top: 50%;
+  left: 50%;
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+}
+
+body .media-viewer .mv-video-card .mv-corner-badge svg.icon-play,
+body .media-viewer .mv-video-card .mv-corner-badge svg.icon-play path {
+  width: 20px;
+  height: 20px;
+  margin-left: 3px;
+  fill: var(--mv-white, #ffffff);
+  display: block;
+}
+
+body .media-viewer .mv-card-content {
+  padding: var(--mv-card-padding, 1.5rem 1.25rem 2.2rem 1.25rem); 
+}
+
+body .media-viewer .mv-card-content h3 {
+  font-size: var(--mv-card-title-size, 1.05rem);
+  font-weight: var(--mv-weight-bold, 700);
+  color: var(--mv-text-primary, #2b2b2b);
+  margin: 0 0 0.5rem 0;
+  line-height: var(--mv-line-height-tight, 1.35);
+}
+
+body .media-viewer .mv-card-content p {
+  font-size: var(--mv-card-body-size, 0.9rem);
+  color: var(--mv-text-muted, #555555);
+  line-height: var(--mv-line-height-base, 1.5);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   4. RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 991px) {
+  body .media-viewer .mv-view-content-box {
+    padding: var(--mv-view-padding-md, 3rem 1.5rem);
+  }
+  body .media-viewer .mv-list-section {
+    width: var(--mv-list-width-md, 85%);
+    max-width: 100%;
+    padding: var(--mv-list-padding-md, 2rem 3rem 4rem 3rem);
+  }
+}
+
+@media (max-width: 767px) {
+  body .media-viewer .mv-list-section {
+    width: var(--mv-list-width-sm, 90%);
+    columns: var(--mv-column-count-sm, 2) var(--mv-column-min-width-sm, 180px);
+    padding: var(--mv-list-padding-sm, 2rem 2rem 4rem 2rem);
+  }
+}
+
+@media (max-width: 479px) {
+  body .media-viewer .mv-list-section {
+    width: var(--mv-list-width-xs, 100%);
+    columns: var(--mv-column-count-xs, 1) 100%;
+    padding-left: var(--mv-list-padding-xs-x, 1.25rem);
+    padding-right: var(--mv-list-padding-xs-x, 1.25rem);
+  }
+}

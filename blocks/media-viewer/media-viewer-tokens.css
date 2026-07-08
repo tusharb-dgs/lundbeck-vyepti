@@ -1,0 +1,26 @@
+/* Media Viewer Core Architectural Tokens */
+:root {
+  /* System Layout Constraining */
+  --mv-max-width: 1200px;
+  --mv-content-limit: 850px;
+  --mv-padding-x: 1.5rem;
+  --mv-layout-gap: 3rem;
+  --mv-grid-gap: 1.25rem;
+  --mv-radius: 12px;
+
+  /* Typography Colors */
+  --mv-text-dark: #2b2b2b;
+
+  /* Accent Branding Palettes */
+  --mv-bg-light-blue: #f0f7fa;
+  --mv-accent-ring: #d56161;
+  
+  /* Interface Overlay Badge Palettes */
+  --mv-badge-purple: #8c469f;
+  --mv-badge-pink: #eb6e6e;
+  --mv-badge-teal: #00607a;
+
+  /* Layers Stack */
+  --mv-z-base: 1;
+  --mv-z-overlay: 3;
+}
