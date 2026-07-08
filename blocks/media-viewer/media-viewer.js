@@ -10,7 +10,7 @@ function loadBrightcoveScript(accountId, playerId) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = scriptId;
-    script.src = `https://brightcove.net{accountId}/${playerId}_default/index.min.js`;
+    script.src = `https://players.brightcove.net/${accountId}/${playerId}_default/index.min.js`;
     script.async = true;
     script.onload = resolve;
     script.onerror = reject;
