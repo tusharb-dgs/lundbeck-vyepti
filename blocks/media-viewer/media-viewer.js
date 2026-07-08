@@ -10,7 +10,7 @@ function loadBrightcoveScript(accountId, playerId) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = scriptId;
-    script.src = `https://players.brightcove.net/${accountId}/${playerId}_default/index.min.js`;
+    script.src = `https://brightcove.net{accountId}/${playerId}_default/index.min.js`;
     script.async = true;
     script.onload = resolve;
     script.onerror = reject;
@@ -43,7 +43,7 @@ export default function decorate(block) {
     });
   }
 
-  // Check URL parameters once
+  // Check URL parameters once on initial load
   const urlParams = new URLSearchParams(window.location.search);
   let matchedIndex = 0; // Fallback default to the first item (index 0)
 
@@ -82,6 +82,7 @@ export default function decorate(block) {
         imageAlt: imageEl ? imageEl.alt : '',
         videoId,
         isFeatured,
+        queryParamName, // Store the parameter on the item object
       });
 
       // If the parameter text matches a key in the URL, flag this index as matched
@@ -207,6 +208,16 @@ export default function decorate(block) {
       block.querySelectorAll('.mv-card').forEach(c => c.classList.remove('is-active'));
       card.classList.add('is-active');
       updateViewer(item);
+      
+      // Update browser URL query parameter without page reload
+      if (item.queryParamName) {
+        const newUrl = `${window.location.pathname}?${item.queryParamName}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      } else {
+        // If a card doesn't have an assigned query parameter, clean up the URL search segment
+        window.history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+      }
+
       viewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
