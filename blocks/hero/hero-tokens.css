@@ -85,7 +85,7 @@
   --hero-teaser-eyebrow-line-height: 22px;
   --hero-teaser-eyebrow-line-height-desktop: 32px;
   --hero-teaser-eyebrow-gap: 8px;
-  --hero-teaser-eyebrow-gap-md: 4px;
+  --hero-teaser-eyebrow-gap-md: 9px;
   --hero-teaser-heading-line-height: 36px;
   --hero-teaser-heading-line-height-md: 40px;
   --hero-teaser-heading-color: var(--brand-primary);
@@ -210,14 +210,16 @@
     text-align: left;
   }
 
-  /* Source eyebrow at 768 stays 18px/32px; keep a small 4px gap here to add a
-     hair of air below "Clinical Studies" (the web font sits slightly lower in
-     its line box than the source render). Resets to 0 at 992px+. */
+  /* Source eyebrow at 768 stays 18px/32px and lifts "Clinical Studies" off the
+     headline with a 9px bottom padding (matching vyepti.com's h3 padding-bottom
+     rather than a margin, so the extra air sits inside the eyebrow box). Resets
+     at 992px+. */
   .hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
   .hero.teaser h3 {
     font-size: var(--hero-teaser-eyebrow-font-size);
     line-height: var(--hero-teaser-eyebrow-line-height-desktop);
-    margin-bottom: var(--hero-teaser-eyebrow-gap-md);
+    margin-bottom: 0;
+    padding-bottom: var(--hero-teaser-eyebrow-gap-md);
     text-align: left;
   }
 
@@ -246,7 +248,7 @@
   .hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
   .hero.teaser h3 {
     font-size: var(--hero-teaser-eyebrow-font-size-md);
-    margin-bottom: 0;
+    padding-bottom: 0;
   }
 
   .hero.teaser .hero-panel-description > h1,
