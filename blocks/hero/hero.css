@@ -449,8 +449,6 @@ main > .section.hero-container {
   color: var(--hero-text-color-light);
 }
 
-
-
 @media (width >= 600px) {
   .hero.single {
     min-height: var(--hero-single-min-height-tablet);
@@ -583,6 +581,7 @@ main > .section.hero-container {
 .section.single-light .hero > div:last-of-type a, .section.single-dark .hero > div:last-of-type a {
   margin-top:24px;
 }
+
 }
 
 @media (width >= 992px) {

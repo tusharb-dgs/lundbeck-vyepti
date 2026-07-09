@@ -68,6 +68,18 @@
           "value": "",
           "label": "Text",
           "valueType": "string"
+        },
+        {
+          "component": "select",
+          "name": "classes",
+          "label": "Style",
+          "value": "",
+          "valueType": "string",
+          "description": "Teaser renders the non-homepage sub-banner layout (left-aligned overlay, teal headline).",
+          "options": [
+            { "name": "Default", "value": "" },
+            { "name": "Teaser", "value": "teaser" }
+          ]
         }
       ]
     }

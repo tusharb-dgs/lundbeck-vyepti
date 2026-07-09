@@ -93,6 +93,7 @@
 
   /* nav heights */
   --nav-height: 200px; /* @libs */
+  --nav-height-mobile: 124px; /* fits the mobile nav content (no dead space) */
   --nav-brand-row-height-mobile: 97px; /* @libs */
   --breadcrumbs-height: 34px; /* @libs */
   --header-height: var(--nav-height); /* @libs */
@@ -175,6 +176,16 @@
   src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial'); /* @libs */
 }
 
+/* Extra-bold (800) headings had no fallback face, so weight 800 fell back to a
+   synthesized bold ~20% wider than Proxima Nova ExtraBold — changing headline
+   wrap points. size-adjust matches the fallback's width to the real font. */
+@font-face {
+  font-family: proxima-nova-fallback;
+  font-weight: 800;
+  size-adjust: 84%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial');
+}
+
 body { /* @libs */
   display: none; /* @libs */
   margin: 0; /* @libs */
@@ -196,7 +207,7 @@ body.appear { /* @libs */
 }
 
 header { /* @libs */
-  min-height: var(--header-height); /* @libs */
+  min-height: var(--nav-height-mobile); /* fits mobile nav; grows to --nav-height at 992px+ */
   height: auto; /* fit nav content so it never overflows onto main */
 }
 

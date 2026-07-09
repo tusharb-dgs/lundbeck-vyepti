@@ -6,7 +6,7 @@
 
   /* colors */
   --hero-text-color-light: #fff;
-  --hero-text-shadow: 0 1px 3px rgb(0 0 0 / 60%)
+  --hero-text-shadow: 0 1px 3px rgb(0 0 0 / 60%);
 
   /* eyebrow (h3) */
   --hero-eyebrow-font-size: 20px;
@@ -73,8 +73,208 @@
   --hero-single-cta-color: var(--background-color);
   --hero-single-cta-arrow: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="22" height="9" viewBox="0 0 22 9" fill="none"><path d="M0 4.5h20M16.5 1 20 4.5 16.5 8" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 
+  /* teaser variant (non-homepage sub-banner) — dark eyebrow + teal headline
+     per vyepti.com .teaser.sub-banner-teaser. Mobile is image-driven with
+     centred text; 768px+ switches to a container-centred, left-aligned overlay.
+     Colours and fonts reuse global tokens; layout reuses the single-* tokens. */
+  --hero-teaser-eyebrow-color: var(--text-color);
+  --hero-teaser-eyebrow-font-size: 18px;
+  --hero-teaser-eyebrow-font-size-md: 22px;
+  --hero-teaser-eyebrow-font-size-desktop: 24px;
+  --hero-teaser-eyebrow-font-weight: 600;
+  --hero-teaser-eyebrow-line-height: 22px;
+  --hero-teaser-eyebrow-line-height-desktop: 32px;
+  --hero-teaser-eyebrow-gap: 8px;
+  --hero-teaser-eyebrow-gap-md: 9px;
+  --hero-teaser-heading-line-height: 36px;
+  --hero-teaser-heading-line-height-md: 40px;
+  --hero-teaser-heading-color: var(--brand-primary);
+  --hero-teaser-caption-color: var(--hero-text-color-light);
+  --hero-teaser-caption-font-size: 12px;
+
+  /* mobile overlay top offset (% of image-driven banner height) — text sits over
+     the sky with the subjects visible below, matching the source composition */
+  --hero-teaser-content-top-mobile: 10.5%;
+
+  /* banner height (background image is absolute, so the panel needs an explicit
+     height); tracks the source sub-banner proportions per breakpoint. */
+  --hero-teaser-min-height: 200px;
+  --hero-teaser-min-height-desktop: 240px;
+
   /* z-index layers */
   --hero-z-bg: 0;
   --hero-z-content: 1;
   --hero-z-caption: 2;
+}
+
+/* ═══════════════════════════════════════════════════
+   TEASER VARIANT (.hero.teaser) — non-homepage sub-banner
+   Authored as one row (image cell + text cell), so the hero decorator renders
+   the dual-panel markup: .hero-panels > .hero-panel-dark > .hero-panel-bg (one
+   consolidated <picture>), a panel-level p.actor-portrayal, and
+   .hero-panel-content > .hero-panel-description > (p.eyebrow + h1). The eyebrow
+   is an accessible bold <p> (a legacy <h3> above the <h1> is invalid heading
+   order). Base dual-panel already gives an image-driven mobile height and a
+   240px desktop height; these rules restyle the text into the vyepti.com
+   .teaser.sub-banner-teaser look:
+     • Mobile — text overlay is top-anchored over the sky and centred, subjects
+       visible below.
+     • 768px+ — background is a full-bleed layer; overlay is container-centred,
+       vertically centred and left-aligned.
+   Dark eyebrow + teal headline; colours/fonts come from global tokens. The
+   eyebrow must override the homepage split-banner p rules (white, 38–64px,
+   weight 800) that otherwise apply to .hero-panel-description > p. */
+
+/* Mobile: text overlay top-anchored + centred over the image (top % is relative
+   to the panel height, so the text sits ~10.5% down regardless of image size). */
+.hero.teaser .hero-panel-content {
+  inset: var(--hero-teaser-content-top-mobile) 0 auto;
+  padding: 0 30px;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+}
+
+/* Eyebrow — the accessible bold <p> (first child of the description). Higher
+   specificity than the homepage split-banner p rules so the teaser look wins.
+   Also cover the legacy <h3> in case a page has not been re-authored yet. */
+.hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
+.hero.teaser h3 {
+  color: var(--hero-teaser-eyebrow-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--hero-teaser-eyebrow-font-size);
+  font-weight: var(--hero-teaser-eyebrow-font-weight);
+  line-height: var(--hero-teaser-eyebrow-line-height);
+  margin: 0 0 var(--hero-teaser-eyebrow-gap);
+  padding: 0;
+  text-align: center;
+}
+
+/* hero.js wraps bold text in span.accent-color (rose); keep the eyebrow dark. */
+.hero.teaser .hero-panel-dark .hero-panel-description > p:first-child .accent-color,
+.hero.teaser h3 .accent-color {
+  color: inherit;
+  font-weight: inherit;
+}
+
+/* Headline (h1) — teal, centred on mobile. */
+.hero.teaser .hero-panel-description > h1,
+.hero.teaser h1 {
+  color: var(--hero-teaser-heading-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--hero-single-heading-font-size-m);
+  font-weight: var(--heading-font-weight);
+  line-height: var(--hero-teaser-heading-line-height);
+  margin: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* Actor portrayal caption — white, italic, bottom-right. Font-size, bottom
+   offset match the source (12px; 11px mobile / 16px at 768px+). */
+.hero.teaser .actor-portrayal,
+.hero.teaser .actor-portrayal em,
+.hero.teaser .actor-portrayal sup {
+  font-size: var(--hero-teaser-caption-font-size);
+}
+
+.hero.teaser .actor-portrayal {
+  position: absolute;
+  right: 24px;
+  bottom: 11px;
+  z-index: var(--hero-z-caption);
+  margin: 0;
+  color: var(--hero-teaser-caption-color);
+  text-shadow: var(--hero-text-shadow);
+  font-style: italic;
+  font-weight: 400;
+}
+
+@media (width >= 768px) {
+  /* Explicit banner height (the shared dual-panel rule sets min-height:0). */
+  .hero.teaser .hero-panel {
+    min-height: var(--hero-teaser-min-height-desktop);
+  }
+
+  /* Overlay: container-centred, vertically centred, left-aligned. Uses the
+     site's Bootstrap container caps (720 / 960 / 1140 at 768 / 992 / 1200) so
+     the text's left edge matches the source grid (39 / 31 / 45px from the
+     panel edge) rather than sitting flush at 15px. */
+  .hero.teaser .hero-panel-content {
+    inset: 0;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 15px;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* Source eyebrow at 768 stays 18px/32px and lifts "Clinical Studies" off the
+     headline with a 9px bottom padding (matching vyepti.com's h3 padding-bottom
+     rather than a margin, so the extra air sits inside the eyebrow box). Resets
+     at 992px+. */
+  .hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
+  .hero.teaser h3 {
+    font-size: var(--hero-teaser-eyebrow-font-size);
+    line-height: var(--hero-teaser-eyebrow-line-height-desktop);
+    margin-bottom: 0;
+    padding-bottom: var(--hero-teaser-eyebrow-gap-md);
+    text-align: left;
+  }
+
+  .hero.teaser .hero-panel-description > h1,
+  .hero.teaser h1 {
+    font-size: var(--hero-single-heading-font-size-m);
+    line-height: var(--hero-teaser-heading-line-height-md);
+    width: 60%;
+    text-align: left;
+  }
+
+  /* Right-align the caption to the source's content column so it tracks inward
+     on wide screens (source: 25px@768 → 108@1200 → 132@1440 ≈ (100vw-1176)/2,
+     floored at 25px) instead of hugging the full-bleed panel edge. */
+  .hero.teaser .actor-portrayal {
+    right: max(25px, calc((100% - 1176px) / 2));
+    bottom: 16px;
+  }
+}
+
+@media (width >= 992px) {
+  .hero.teaser .hero-panel-content {
+    max-width: 960px;
+  }
+
+  .hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
+  .hero.teaser h3 {
+    font-size: var(--hero-teaser-eyebrow-font-size-md);
+    padding-bottom: 0;
+  }
+
+  /* Source caps the headline column at ~52% of the 960px content width across
+     the 992-1199 range, so it wraps at the same point as vyepti.com. */
+  .hero.teaser .hero-panel-description > h1,
+  .hero.teaser h1 {
+    font-size: 42px;
+    line-height: 48px;
+    width: 52%;
+  }
+}
+
+@media (width >= 1200px) {
+  .hero.teaser .hero-panel-content {
+    max-width: var(--max-width-site);
+  }
+
+  .hero.teaser .hero-panel-dark .hero-panel-description > p:first-child,
+  .hero.teaser h3 {
+    font-size: var(--hero-teaser-eyebrow-font-size-desktop);
+  }
+
+  .hero.teaser .hero-panel-description > h1,
+  .hero.teaser h1 {
+    font-size: var(--hero-single-heading-font-size-desktop);
+    line-height: 60px;
+    width: 60%;
+  }
 }
