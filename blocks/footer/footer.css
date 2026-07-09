@@ -38,9 +38,10 @@ footer .footer > div { /* @boilerplate */
   margin: 0; /* @boilerplate */
 } /* @boilerplate */
 
-/* ===== Link section (mobile-first: links stack centered).
-   Renders as a full-width coloured band when --footer-linkbar-background
-   is set to a colour; stays transparent (inline list) when it isn't. ===== */
+/* ===== Link section: links flow inline and wrap as a single centered
+   paragraph at every width (never stack one-per-line). Renders as a
+   full-width coloured band when --footer-linkbar-background is set to a
+   colour; stays transparent (inline list) when it isn't. ===== */
 footer .footer .section:first-child { /* @boilerplate */
   padding: var(--footer-linkbar-padding); /* @boilerplate */
   background-color: var(--footer-linkbar-background); /* @boilerplate */
@@ -54,22 +55,24 @@ footer .footer .section:first-child .default-content-wrapper {
   text-align: var(--footer-link-text-align);
 }
 
-footer .footer .section:first-child p { /* @boilerplate */
-  margin-top: var(--footer-link-mobile-gap); /* @boilerplate */
-} /* @boilerplate */
+footer .footer .section:first-child p {
+  display: inline-block;
+  margin-right: var(--footer-link-gap-mobile, var(--footer-link-gap));
+}
 
-footer .footer .section:first-child p:first-child { /* @boilerplate */
-  margin-top: 0; /* @boilerplate */
-} /* @boilerplate */
+footer .footer .section:first-child p:last-child {
+  margin-right: 0;
+}
 
-footer .footer .section:first-child a { /* @boilerplate */
-  color: var(--footer-link-color); /* @boilerplate */
-  font-size: var(--footer-link-font-size); /* @boilerplate */
-  font-weight: var(--footer-link-font-weight); /* @boilerplate */
-  line-height: var(--footer-link-line-height); /* @boilerplate */
-  text-decoration: var(--footer-link-decoration); /* @boilerplate */
-  transition: color var(--footer-transition); /* @boilerplate */
-} /* @boilerplate */
+footer .footer .section:first-child a {
+  color: var(--footer-link-color);
+  font-size: var(--footer-link-font-size);
+  font-weight: var(--footer-link-font-weight);
+  line-height: var(--footer-link-line-height);
+  letter-spacing: var(--footer-link-letter-spacing);
+  text-decoration: var(--footer-link-decoration);
+  transition: color var(--footer-transition);
+}
 
 footer .footer .section:first-child a:hover { /* @boilerplate */
   color: var(--footer-link-hover-color); /* @boilerplate */
@@ -89,13 +92,13 @@ footer .footer .columns-container > * {
   padding-inline: 15px;
 }
 
-/* legal copy */
-footer .footer .columns p { /* @boilerplate */
-  color: var(--footer-legal-color); /* @boilerplate */
-  font-size: var(--footer-legal-font-size); /* @boilerplate */
-  line-height: var(--footer-legal-line-height); /* @boilerplate */
-  text-align: center; /* @boilerplate */
-} /* @boilerplate */
+/* legal copy: always left-aligned, at every width */
+footer .footer .columns p {
+  color: var(--footer-legal-color);
+  font-size: var(--footer-legal-font-size);
+  line-height: var(--footer-legal-line-height);
+  text-align: left;
+}
 
 footer .footer .columns-container .columns > div > :first-child p:not(:last-child) { /* @boilerplate */
   margin-bottom: var(--footer-legal-margin-bottom); /* @boilerplate */
@@ -165,11 +168,15 @@ footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) im
   height: auto; /* @boilerplate */
 } /* @boilerplate */
 
-/* last image is the company (Lundbeck) logo — larger, gapped from the icons */
-footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child { /* @boilerplate */
-  margin-right: 0; /* @boilerplate */
-  margin-left: var(--footer-logo-margin-left); /* @boilerplate */
-} /* @boilerplate */
+/* last image is the company (Lundbeck) logo — larger, gapped from the icons,
+   and always pinned to the right edge (float works at every width; flex
+   items ignore float, so this is a no-op once the ≥768px flex layout below
+   takes over and orders it there instead). */
+footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child {
+  float: right;
+  margin-right: 0;
+  margin-left: var(--footer-logo-margin-left);
+}
 
 footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child img { /* @boilerplate */
   width: var(--footer-logo-width); /* @boilerplate */
@@ -190,6 +197,14 @@ footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):la
     padding: var(--footer-linkbar-padding-desktop, var(--footer-linkbar-padding));
   }
 
+  footer .footer .section:first-child .default-content-wrapper {
+    padding: var(--footer-linkbar-inner-padding-desktop, var(--footer-linkbar-inner-padding));
+  }
+
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) img {
+    width: var(--footer-social-icon-width-desktop, var(--footer-social-icon-width));
+  }
+
   footer .footer a[href^="tel:"] {
     background-position: var(--footer-phone-icon-position-desktop, var(--footer-phone-icon-position));
   }
@@ -198,23 +213,16 @@ footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):la
     width: var(--footer-logo-width-tablet, var(--footer-logo-width));
   }
 
-  /* links on one centered row */
-  footer .footer .section:first-child p { /* @boilerplate */
-    display: inline-block; /* @boilerplate */
-    margin-top: 0; /* @boilerplate */
-  } /* @boilerplate */
-
-  footer .footer .section:first-child p:not(:last-child) { /* @boilerplate */
-    margin-right: var(--footer-link-gap); /* @boilerplate */
-  } /* @boilerplate */
-
   footer .footer .section:first-child a { /* @boilerplate */
     font-size: var(--footer-link-font-size-desktop); /* @boilerplate */
+    letter-spacing: var(--footer-link-letter-spacing-desktop);
   } /* @boilerplate */
 
-  /* legal copy left-aligned */
-  footer .footer .columns p { /* @boilerplate */
-    text-align: left; /* @boilerplate */
+  footer .footer .section:first-child p {
+    margin-right: var(--footer-link-gap);
+  }
+
+  footer .footer .columns p {
     line-height: var(--footer-legal-line-height-desktop, var(--footer-legal-line-height));
   }
 

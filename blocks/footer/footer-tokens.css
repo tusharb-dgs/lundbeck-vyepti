@@ -61,18 +61,27 @@
   --footer-linkbar-background: var(--brand-teal); /* #046183; use transparent for no band */ /* @boilerplate */
   --footer-linkbar-padding: 16px 41px 16px 42px; /* mobile outer band padding; 0 when no band */
   --footer-linkbar-padding-desktop: 20px 0 22px; /* outer band padding at 768px+ */
-  --footer-linkbar-inner-padding: 0 15px; /* gutter inside the max-width wrapper */ /* @boilerplate */
+
+  /* gutter inside the max-width wrapper. Mobile is 0 because the outer band
+     (--footer-linkbar-padding) already provides its own 41/42px gutter there
+     — adding this too would double up the padding and starve the link row
+     of width. At desktop the outer band goes to 0 horizontal, so this inner
+     gutter becomes the only one. */
+  --footer-linkbar-inner-padding: 0;
+  --footer-linkbar-inner-padding-desktop: 0 15px;
   --footer-link-text-align: center; /* center on band; left for inline lists */ /* @boilerplate */
   --footer-link-color: #fff; /* link text on the band */ /* @boilerplate */
   --footer-link-hover-color: var(--brand-teal-light); /* #7ebcc6 */ /* @boilerplate */
   --footer-link-decoration: none; /* @boilerplate */
   --footer-link-hover-decoration: none; /* set to underline for plain-list sites */ /* @boilerplate */
   --footer-link-font-size: 14px; /* mobile */ /* @boilerplate */
+  --footer-link-letter-spacing: -0.5px; /* mobile — tightened so all 5 links fit on one line */
+  --footer-link-letter-spacing-desktop: normal;
   --footer-link-font-size-desktop: 16px; /* @boilerplate */
   --footer-link-font-weight: 600; /* @boilerplate */
   --footer-link-line-height: 22px; /* @boilerplate */
-  --footer-link-gap: 40px; /* horizontal space between links (desktop row) */ /* @boilerplate */
-  --footer-link-mobile-gap: 10px; /* vertical gap when stacked on mobile */ /* @boilerplate */
+  --footer-link-gap: 40px; /* desktop, 768px+ */
+  --footer-link-gap-mobile: 32px; /* below 768px — tighter, so all 5 links fit on one line at narrow-ish widths instead of wrapping */
   --footer-transition: 0.2s ease; /* @boilerplate */
 
   /* ---- body section (legal + logo) -----------------------------------
@@ -127,7 +136,8 @@
   /* ---- social icons + company logo (column 2) ----------------------- */
   --footer-social-row-margin-top: 27px; /* space above the social/logo row (desktop) */
   --footer-social-row-margin-top-mobile: 44px; /* space above the social/logo row on mobile */
-  --footer-social-icon-width: 27px; /* @boilerplate */
+  --footer-social-icon-width: 32px; /* mobile (icons are larger below 768px than at desktop) */
+  --footer-social-icon-width-desktop: 27px;
   --footer-social-icon-gap: 10px; /* mobile edge gap between social icons */
   --footer-social-icon-gap-desktop: 8px;
   --footer-logo-width: 116px; /* mobile Lundbeck logo width */
@@ -195,10 +205,17 @@
      }
    ===================================================================== */
 
-/* Vyepti: the YouTube glyph is 32x26 in the source (every other social icon
-   is a 27x27 square) — the shared --footer-social-icon-width token can only
-   express one size, so this pins the one exception. */
+/* Vyepti: the YouTube glyph has a different aspect ratio than the other
+   (square) social icons at every tier — 38x30 mobile, 32x26 desktop — so the
+   shared --footer-social-icon-width token can't express it; pin it here. */
 footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img[alt="Youtube icon."]) img {
-  width: 32px;
-  height: 26px;
+  width: 38px;
+  height: 30px;
+}
+
+@media (width >= 768px) {
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img[alt="Youtube icon."]) img {
+    width: 32px;
+    height: 26px;
+  }
 }
