@@ -10,16 +10,19 @@
 }
 
 .ugc-form-title {
-  color: var(--ugc-color-primary);
+  /* color: var(--brand-primary); */
+  color:var(--brand-primary);
   font-size: var(--ugc-font-size-title);
   margin-bottom: 16px;
 }
 
 .ugc-form-description,
 .ugc-form-required-note {
-  font-size: var(--ugc-font-size-body);
+  /* font-size: var(--body-font-size-s); */
+  font-size: var(--body-font-size-s);
   line-height: 1.4;
   margin-bottom: 20px;
+  font-family: var(--body-font-family);
 }
 
 /* Individual Form Fields */
@@ -30,8 +33,8 @@
 }
 
 .ugc-form-field-wrapper label {
-  color: var(--ugc-color-primary);
-  font-size: var(--ugc-font-size-body);
+  color: var(--brand-primary);
+  font-size: var(--body-font-size-s);
   margin-bottom: 6px;
 }
 
@@ -67,7 +70,7 @@
 
 .ugc-form-field-wrapper .ugc-error-message {
   color: var(--ugc-color-error-text);
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
   margin-top: 6px;
   display: block;
   font-weight: normal;
@@ -76,12 +79,12 @@
 /* Before Submit Text Block */
 .ugc-form-info {
   margin-top: 24px;
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
   line-height: 1.4;
 }
 
 .ugc-form-info strong {
-  color: var(--ugc-color-primary);
+  color: var(--brand-primary);
   display: block;
   margin-bottom: 6px;
 }
@@ -89,12 +92,12 @@
 /* Dynamic Media Upload Section */
 .ugc-form-upload-group {
   margin-top: 24px;
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
 }
 
 .ugc-upload-instructions-text strong {
-  color: var(--ugc-color-primary);
-  font-size: var(--ugc-font-size-body);
+  color: var(--brand-primary);
+  font-size: var(--body-font-size-s);
   display: block;
   margin-bottom: 4px;
 }
@@ -148,7 +151,7 @@
 }
 
 .ugc-file-name-link {
-  color: var(--ugc-color-primary);
+  color: var(--brand-primary);
   font-weight: bold;
   text-decoration: none;
   font-size: 15px;
@@ -183,9 +186,10 @@
   color: var(--ugc-color-text-dark);
   padding: 8px 16px;
   cursor: pointer;
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
   margin-top: 8px;
   margin-bottom: 24px;
+  border-radius: 0px;
 }
 
 .ugc-remove-media-btn:hover,
@@ -206,17 +210,18 @@
   height: 18px;
   margin-top: 2px;
   cursor: pointer;
+  transform: scale(2.0);
 }
 
 .ugc-form-consent label {
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
   line-height: 1.4;
   cursor: pointer;
 }
 
 /* Submission Button Action */
 .ugc-form-submit {
-  background-color: var(--ugc-color-primary);
+  background-color: var(--brand-primary);
   color: var(--ugc-color-bg-light);
   border: none;
   border-radius: 20px;
@@ -228,7 +233,7 @@
 }
 
 .ugc-form-submit:hover {
-  background-color: var(--ugc-color-primary-dark);
+  background-color: var(--brand-primary-dark);
 }
 
 /* Legal Conditions Accordion Drawer */
@@ -248,7 +253,7 @@
   align-items: center;
   cursor: pointer;
   color: var(--ugc-color-text-dark);
-  font-size: var(--ugc-font-size-body);
+  font-size: var(--body-font-size-s);
 }
 
 .ugc-form-terms-accordion summary::-webkit-details-marker {
@@ -259,7 +264,7 @@
   content: '\2212';
   font-weight: bold;
   font-size: 18px;
-  color: var(--ugc-color-primary);
+  color: var(--brand-primary);
 }
 
 .ugc-form-terms-accordion:not([open]) summary::after {

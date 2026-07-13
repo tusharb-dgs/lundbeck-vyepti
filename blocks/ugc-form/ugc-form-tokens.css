@@ -1,8 +1,8 @@
 /* ugc-form design tokens */
 :root {
   /* Colors */
-  --ugc-color-primary: #005A87;
-  --ugc-color-primary-dark: #004466;
+  --brand-primary: #005A87;
+  --brand-primary-dark: #004466;
   --ugc-color-error-text: #B42442;
   --ugc-color-error-bg: #FFFBFB;
   --ugc-color-text-dark: #333333;
@@ -17,7 +17,7 @@
   /* Typography */
   --ugc-font-base: Arial, sans-serif;
   --ugc-font-size-title: 24px;
-  --ugc-font-size-body: 14px;
+  --body-font-size-s: 14px;
   --ugc-font-size-input: 16px;
   --ugc-font-size-legal: 12px;
 

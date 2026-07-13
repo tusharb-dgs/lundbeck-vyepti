@@ -270,6 +270,25 @@ export default function decorate(block) {
     form.appendChild(consentGroup);
   }
 
+    if (config['optional-checkbox-text']) {
+    const consentGroup = document.createElement('div');
+    consentGroup.className = 'ugc-form-consent';
+    
+    const checkbox = document.createElement('input');
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.id = 'ugcConsentOpt';
+    checkbox.name = 'consent';
+    checkbox.required = true;
+    
+    const label = document.createElement('label');
+    label.setAttribute('for', 'ugcConsentOpt');
+    label.innerHTML = config['optional-checkbox-text'];
+    
+    consentGroup.appendChild(checkbox);
+    consentGroup.appendChild(label);
+    form.appendChild(consentGroup);
+  }
+
   const submitBtn = document.createElement('button');
   submitBtn.setAttribute('type', 'submit');
   submitBtn.className = 'ugc-form-submit';
