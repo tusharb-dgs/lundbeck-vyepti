@@ -17,6 +17,15 @@
   display: block; /* @boilerplate */
 }
 
+/* narrow-copy variant — single authored column constrained to a readable copy
+   measure, left-aligned and flush to the section's leading edge (matching the
+   ~540px content column on vyepti.com/what-to-expect). Full width on mobile;
+   the cap only bites once the section container grows past it (768px+). */
+main .columns.narrow-copy > div > div {
+  max-width: var(--columns-narrow-copy-max-width);
+  text-align: left;
+}
+
 /* stats-callout variant — vyepti study/survey results callouts.
    Teal headings, large red italic "X fewer" numbers, centered copy. */
 main .columns.stats-callout > div > div {

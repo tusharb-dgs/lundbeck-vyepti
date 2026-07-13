@@ -4,4 +4,9 @@
   --columns-divider-width: 1px;
   --columns-divider-spacing: var(--spacing-l, 32px);
   --columns-divider-color: #7ebcc6;
+
+  /* narrow-copy variant — single-column readable body-copy measure (matches the
+     ~540px content column on vyepti.com/what-to-expect). Left-aligned, flush to
+     the section's leading edge; full width on mobile. */
+  --columns-narrow-copy-max-width: 540px;
 }
