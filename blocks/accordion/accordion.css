@@ -119,6 +119,51 @@
   color: var(--link-hover-color); /* @libs */
 }
 
+/* standalone CTA links render as filled teal pill buttons (matching the source),
+   overriding the inline text-link rules above */
+.accordion .accordion-item-body a.accordion-cta {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: var(--accordion-cta-margin-top);
+  padding: var(--accordion-cta-padding);
+  border-radius: var(--accordion-cta-border-radius);
+  background-color: var(--accordion-cta-background);
+  color: var(--accordion-cta-color);
+  font-size: var(--accordion-cta-font-size);
+  font-weight: var(--accordion-cta-font-weight);
+  line-height: var(--accordion-cta-line-height);
+  text-decoration: none;
+  transition: var(--button-transition);
+}
+
+.accordion .accordion-item-body a.accordion-cta:hover,
+.accordion .accordion-item-body a.accordion-cta:focus {
+  background-color: var(--accordion-cta-hover-background);
+  color: var(--accordion-cta-color);
+}
+
+/* trailing arrow icon (global a.button::after is gated on .button, so reproduce
+   it here reusing the shared icon tokens) */
+.accordion .accordion-item-body a.accordion-cta::after {
+  content: '';
+  display: inline-block;
+  width: var(--button-icon-width);
+  height: var(--button-icon-height);
+  margin-left: var(--button-icon-gap);
+  vertical-align: middle;
+  background-color: currentcolor;
+  mask-image: var(--button-icon-url);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transition: var(--button-transition);
+}
+
+.accordion .accordion-item-body a.accordion-cta:hover::after,
+.accordion .accordion-item-body a.accordion-cta:focus::after {
+  opacity: var(--button-icon-opacity-hover);
+}
+
 /* tablet+: always reveal the descriptive phrase alongside the lead */
 @media (width >= 768px) { /* @libs */
   .accordion .accordion-item-label-detail { /* @libs */

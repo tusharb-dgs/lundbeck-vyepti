@@ -39,6 +39,18 @@
   --accordion-body-list-item-gap: 8px; /* @libs */
   --accordion-body-panel-padding-bottom: 26px; /* @libs — last expanded panel, mobile */
 
+  /* standalone CTA pill (e.g. "Enroll today") — filled teal pill matching the
+     source's accordion CTAs; references global tier-1 button tokens */
+  --accordion-cta-background: var(--brand-primary);
+  --accordion-cta-hover-background: var(--brand-primary-light);
+  --accordion-cta-color: var(--background-color);
+  --accordion-cta-font-size: var(--button-font-size);
+  --accordion-cta-font-weight: var(--button-font-weight);
+  --accordion-cta-line-height: var(--button-line-height);
+  --accordion-cta-border-radius: var(--button-border-radius);
+  --accordion-cta-padding: 19px 27px;
+  --accordion-cta-margin-top: 24px;
+
   /* motion */
   --accordion-transition-duration: 0.3s; /* @libs */
   --accordion-icon-transition-duration: 0.5s; /* @libs */

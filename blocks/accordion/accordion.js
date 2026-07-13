@@ -78,7 +78,19 @@ export default function decorate(block) {
         if (detail.textContent.trim()) labelText.append(detail);
       }
     }
-    if (body !== null && body !== undefined) body.className = 'accordion-item-body';
+    if (body !== null && body !== undefined) {
+      body.className = 'accordion-item-body';
+
+      // Standalone action links (a link that is the sole content of its <p>) are
+      // CTAs and render as filled pill buttons; inline links inside sentences stay
+      // as text. Mirrors the sole-content test in scripts.js decorateButtons.
+      body.querySelectorAll(':scope p > a[href]').forEach((a) => {
+        const p = a.closest('p');
+        if (p.textContent.trim() === a.textContent.trim()) {
+          a.classList.add('accordion-cta');
+        }
+      });
+    }
 
     // The whole card toggles the item; clicks inside the open body are ignored
     // so links stay clickable and body text stays selectable.
