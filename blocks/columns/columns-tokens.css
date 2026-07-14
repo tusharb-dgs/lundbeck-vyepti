@@ -9,4 +9,12 @@
      ~540px content column on vyepti.com/what-to-expect). Left-aligned, flush to
      the section's leading edge; full width on mobile. */
   --columns-narrow-copy-max-width: 540px;
+
+  /* locations variant — row of icon-above-label option cards (vyepti.com
+     /what-to-expect "choose from" group). Icon 108px, small centred label. */
+  --columns-locations-icon-size: 108px;
+  --columns-locations-label-font-size: var(--body-font-size-s, 16px);
+  --columns-locations-label-line-height: 18px;
+  --columns-locations-label-gap: 4px;
+  --columns-locations-gap: 16px;
 }

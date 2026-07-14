@@ -26,6 +26,37 @@ main .columns.narrow-copy > div > div {
   text-align: left;
 }
 
+/* locations variant — row of icon-above-label option cards (matching the
+   "Depending on your insurance, you may be able to choose from" group on
+   vyepti.com/what-to-expect). Each authored cell holds one icon + label.
+   Mobile: 2 per row; 768px+: all 4 in a row. */
+main .columns.locations > div {
+  display: flex;
+  flex-flow: row wrap;
+  gap: var(--columns-locations-gap);
+}
+
+main .columns.locations > div > div {
+  order: unset;
+  flex: 0 0 calc((100% - var(--columns-locations-gap)) / 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+main .columns.locations img {
+  width: var(--columns-locations-icon-size);
+  height: var(--columns-locations-icon-size);
+  object-fit: contain;
+}
+
+main .columns.locations p {
+  margin: var(--columns-locations-label-gap) 0 0;
+  font-size: var(--columns-locations-label-font-size);
+  line-height: var(--columns-locations-label-line-height);
+}
+
 /* stats-callout variant — vyepti study/survey results callouts.
    Teal headings, large red italic "X fewer" numbers, centered copy. */
 main .columns.stats-callout > div > div {
@@ -99,6 +130,16 @@ main .columns.stats-callout:has(img) > div > div:not(.columns-img-col) > p:first
     align-items: center; /* @boilerplate */
     flex-direction: unset; /* @boilerplate */
     gap: var(--columns-gap); /* @boilerplate */
+  }
+
+  /* locations: all four option cards in a single row, top-aligned */
+  main .columns.locations > div {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  main .columns.locations > div > div {
+    flex: 1;
   }
 
   .columns > div > div { /* @boilerplate */
