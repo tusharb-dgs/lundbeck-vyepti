@@ -189,6 +189,123 @@ function buildAutoBlocks(main) {
   }
 }
 
+/**
+ * Hosts considered "local" — links to these open in the same tab.
+ * Everything else (plus any PDF) opens in a new tab.
+ */
+const LOCAL_HOSTS = new Set(['localhost']);
+const LOCAL_HOST_SUFFIXES = ['.page', '.live'];
+
+/**
+ * @param {URL} url
+ * @returns {boolean} true when the URL points at a first-party/local host
+ */
+function isLocalUrl(url) {
+  const host = url.hostname.toLowerCase();
+  if (host === window.location.hostname.toLowerCase()) return true;
+  if (LOCAL_HOSTS.has(host)) return true;
+  return LOCAL_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
+/**
+ * Opens external links (and any PDF) in a new tab. First-party links to local
+ * hosts keep their default same-tab behavior. In-page anchors and non-http(s)
+ * schemes (mailto:, tel:, etc.) are left untouched.
+ * @param {Element} element The container element
+ */
+export function decorateExternalLinks(element) {
+  element.querySelectorAll('a[href]').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+
+    let url;
+    try {
+      url = new URL(href, window.location.href);
+    } catch {
+      return;
+    }
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+    const isPdf = url.pathname.toLowerCase().endsWith('.pdf');
+    if (isLocalUrl(url) && !isPdf) return;
+
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+}
+
+/** Duration for the in-page anchor smooth scroll (matches xenazineusa.com). */
+const ANCHOR_SCROLL_DURATION_MS = 1000;
+
+const anchorEaseInOutQuad = (t) => (t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2);
+
+/**
+ * Smooth-scrolls the window to a target Y with an explicit duration (native
+ * smooth scroll speed is not configurable).
+ * @param {number} targetY
+ * @param {number} duration
+ */
+function animatedScrollTo(targetY, duration = ANCHOR_SCROLL_DURATION_MS) {
+  const start = window.scrollY;
+  const distance = targetY - start;
+  if (distance === 0) return;
+  const startTime = performance.now();
+
+  const step = (now) => {
+    const progress = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, start + distance * anchorEaseInOutQuad(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/**
+ * Resolves the in-page target for an anchor click, or null if the link is not
+ * a same-page hash link (external, cross-page, or bare "#").
+ * @param {HTMLAnchorElement} anchor
+ * @returns {HTMLElement|null}
+ */
+function inPageTarget(anchor) {
+  const href = anchor.getAttribute('href');
+  if (!href || href === '#' || !href.includes('#')) return null;
+
+  let url;
+  try {
+    url = new URL(href, window.location.href);
+  } catch {
+    return null;
+  }
+  // must resolve to the current page (same path) to be an in-page anchor
+  if (url.pathname !== window.location.pathname || !url.hash) return null;
+
+  const id = decodeURIComponent(url.hash.substring(1));
+  if (!id) return null;
+  return document.getElementById(id);
+}
+
+/**
+ * Delegated smooth-scroll for in-page anchor links (e.g. nav cards that jump to
+ * an on-page section). Matches the animated scroll on xenazineusa.com without
+ * changing the URL hash (the source site scrolls without updating the URL).
+ * Cross-page and external links are left untouched.
+ * @param {Document|Element} scope
+ */
+export function enableSmoothAnchorScroll(scope = document) {
+  scope.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const anchor = e.target.closest('a[href*="#"]');
+    if (!anchor) return;
+
+    const target = inPageTarget(anchor);
+    if (!target) return;
+
+    e.preventDefault();
+    const scrollMargin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const targetY = target.getBoundingClientRect().top + window.scrollY - scrollMargin;
+    animatedScrollTo(targetY);
+  });
+}
+
 function a11yLinks(main) {
   const links = main.querySelectorAll('a');
   links.forEach((link) => {
@@ -198,25 +315,6 @@ function a11yLinks(main) {
       label = icon ? icon.classList[1]?.split('-')[1] : label;
     }
     link.setAttribute('aria-label', label);
-  });
-}
-
-/**
- * Opens links to PDF documents in a new tab.
- * @param {HTMLElement} main The main container element
- */
-export function decoratePdfLinks(main) {
-  main.querySelectorAll('a[href]').forEach((link) => {
-    let pathname;
-    try {
-      ({ pathname } = new URL(link.href, window.location.href));
-    } catch {
-      return;
-    }
-    if (/\.pdf$/i.test(pathname)) {
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-    }
   });
 }
 
@@ -1018,7 +1116,7 @@ export function decorateMain(main) {
   decorateNestedSections(main);
   decorateButtons(main);
   a11yLinks(main);
-  decoratePdfLinks(main);
+  decorateExternalLinks(main);
   decorateSpanTags(main);
 }
 

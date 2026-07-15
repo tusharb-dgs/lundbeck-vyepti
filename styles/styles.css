@@ -58,8 +58,10 @@
   --error-color: #c02c57; /* @boilerplate */
   --section-divider-width: 1px; /* @libs */
   --section-divider-color: var(--link-hover-color); /* @libs */
-  --section-padding: 24px;
-  --flex-group-gap: 24px;
+  --section-padding: 24px;/* @libs */
+  --flex-group-gap: 24px;/* @libs */
+  --div-width-margin: auto;/* @libs */
+  --div-width-align-items: flex-start;/* @libs */
   
   /* fonts */
   --body-font-family: proxima-nova, proxima-nova-fallback, sans-serif; /* @libs */
@@ -808,6 +810,42 @@ main .section.stats-callout h4 {
     .hide-mobile {
       display: revert;
     }
+
+    /* ==== Start widths ==== */
+
+    div[class^="width-"], div[class*=" width-"] {
+      margin: var(--div-width-margin);
+    }
+    
+    .width-75 {
+      width: 73.5%;
+    }
+    
+    .width-66 {
+      width: 64.5%;
+    }
+    
+    .width-50 {
+      width: 48.5%;
+    }
+    
+    .width-33 {
+      width: 31.5%;
+    }
+    
+    .width-25 {
+      width: 23.5%;
+    }
+    
+    .columns > div:has(> div[class^="width-"],> div[class*=" width-"]) {
+      align-items: var(--div-width-align-items);
+    
+      > div[class^="width-"],> div[class*=" width-"] {
+        flex: none;
+      }
+    }
+    
+    /* ==== End widths ==== */
 
     main .section.stats-callout {
       padding: var(--section-padding-vertical) 0;

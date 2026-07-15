@@ -2,8 +2,9 @@ import { createOptimizedPicture } from './aem.js';
 
 /**
  * Reads single-bracket syntax from the first child of each block cell div.
- * If a cell's first child is <p><code>[classname]</code></p>, the class name
- * is added to the cell div and the <p> is removed.
+ * If a cell's first child is <p><code>[classname]</code></p> or
+ * <p><code>[classname-1,classname-2]</code></p>, the class name(s) are
+ * added to the cell div and the <p> is removed.
  * @param {Element} block
  */
 export function decorateCellClass(block) {
@@ -13,14 +14,14 @@ export function decorateCellClass(block) {
       if (!first || first.tagName !== 'P' || first.children.length !== 1) return;
       const code = first.firstElementChild;
       if (code.tagName !== 'CODE') return;
-      const match = code.textContent.match(/^\[([a-zA-Z0-9_-]+)\]$/);
+      const match = code.textContent.match(/^\[([a-zA-Z0-9_,-]+)\]$/);
       if (!match) return;
-      div.classList.add(match[1]);
+      const classes = match[1].split(',').filter(Boolean);
+      div.classList.add(...classes);
       first.remove();
     });
   });
 }
-
 /**
  * Shared YouTube and Vimeo embed HTML builders.
  * Used by video and embed blocks. Returns HTML strings for DOMPurify or DOM creation.
