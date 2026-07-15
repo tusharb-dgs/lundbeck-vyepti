@@ -471,3 +471,6 @@ main img,
 .ugc-char-count.error {
   color: var(--error-color);
 }
+
+
+.ugc-terms p {    padding-left: 45px;}

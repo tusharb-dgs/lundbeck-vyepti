@@ -289,7 +289,7 @@ function initValidationListeners() {
 }
 
 function fixMarkdownLinks() {
-  document.querySelectorAll('.ugc-intro.field-wrapper p').forEach(el => {
+  document.querySelectorAll('.ugc-terms.field-wrapper p').forEach(el => {
     const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
     if (regex.test(el.innerHTML)) {
       el.innerHTML = el.innerHTML.replace(regex, '<a href="$2" target="_blank" rel="noopener">$1</a>');
