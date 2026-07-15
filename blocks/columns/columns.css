@@ -84,8 +84,10 @@ main .columns.locations > div > div {
 }
 
 main .columns.locations img {
+  display: block;
   width: var(--columns-locations-icon-size-mobile);
   height: var(--columns-locations-icon-size-mobile);
+  margin-inline: auto;
   object-fit: contain;
 }
 
