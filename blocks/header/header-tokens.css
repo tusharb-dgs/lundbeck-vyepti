@@ -18,6 +18,13 @@
   --header-font-size-m: 18px;
   --header-padding-container: 15px;
 
+  /* dropdown: opens flush with the bottom edge of the header bar */
+  --header-dropdown-top: 100%;
+
+  /* dropdown: transparent hover bridge that keeps the pointer within the
+     trigger while travelling down into the submenu (prevents hover loss) */
+  --header-dropdown-bridge-height: 14px;
+
   /* line heights */
   --header-line-height-xs: 14px;
   --header-line-height-s: 18px;

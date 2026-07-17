@@ -1,16 +1,13 @@
 # Your Project's Title...
-
 Your project's description...
 
 ## Environments
-
-- Preview: https://main--lundbeck-libs--aemdemos.aem.page/
-- Live: https://main--lundbeck-libs--aemdemos.aem.live/
+- Preview: https://main--ise-boilerplate--aemdemos.aem.page/
+- Live: https://main--ise-boilerplate--aemdemos.aem.live/
 
 ## Documentation
 
 Before using the aem-block-collection, we recommand you to go through the documentation on https://www.aem.live/docs/ and more specifically:
-
 1. [Developer Tutorial](https://www.aem.live/developer/ue-tutorial)
 1. [Creating Blocks](https://www.aem.live/developer/universal-editor-blocks) and [Content Modelling](https://www.aem.live/developer/component-model-definitions)
 1. [The Anatomy of a Project](https://www.aem.live/developer/anatomy-of-a-project)
@@ -24,7 +21,9 @@ Before using the aem-block-collection, we recommand you to go through the docume
 npm i
 ```
 
-Linting and security
+## Linting
+July 3 2026: This has been updated to use ESLint 10, with patch files to retrofit the Xwalk plugin.
+
 This project is using StyleLint and ESLint for Javascript. Our ESLint configuration includes 3 popular and reputable Javascript code quality and security plugins:
 
 - SonarSource eslint-plugin-sonarjs, a code quality analyzer for JavaScript and TypeScript within the Sonar ecosystem (https://github.com/SonarSource/SonarJS/blob/master/packages/jsts/src/rules/README.md#eslint-rules)
@@ -36,6 +35,7 @@ They are included in this command, which is run automatically via a github actio
 ```sh
 npm run lint
 ```
+
 
 ## Local development
 
@@ -50,3 +50,9 @@ This is a test change
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## Security Rules/Skills
+
+- Adobe security automatically added .cursor/rules/security-global and security-lang, and seems to scan to check they are in place.
+- Much of this ruleset (SQL, XXE, SSRF, server-side sessions, API versioning) targets backend/server code, while this repo is explicitly client-side-only with no runtime deps or backend.
+- Since other agents (Claude, Codex) can't use Cursor rules, 

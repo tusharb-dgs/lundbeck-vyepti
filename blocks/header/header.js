@@ -343,7 +343,9 @@ function decorateNavLinks(sectionsEl) {
         li.setAttribute('tabindex', '0');
         subUl.className = 'nav-dropdown-menu';
 
-        // Hover open/close (desktop only)
+        // Hover open/close (desktop only). The transparent hover bridge on the
+        // panel covers the trigger→panel seam, so the menu can close as soon as
+        // the pointer leaves the item — matching the source site.
         li.addEventListener('mouseenter', () => {
           if (!isDesktop()) return;
           toggleAllNavSections(navList);

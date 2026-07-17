@@ -1,22 +1,310 @@
-@import url('./footer-tokens.css');
+@import url('./footer-tokens.css'); /* @boilerplate */
+
+/* =====================================================================
+   FOOTER — shared structural / layout styles (boilerplate)
+   ---------------------------------------------------------------------
+   This file is SITE-AGNOSTIC. It contains only structure, layout, and
+   default behaviour, written to be driven by the design tokens defined
+   in footer-tokens.css. To adapt the footer for a new site, you should
+   only need to edit footer-tokens.css — not this file.
+
+   Every CSS line carries an "@boilerplate" marker comment so that, when
+   this lib is cloned for a new site, it is clear each rule originates from
+   the shared boilerplate (and should not normally be edited here).
+
+   Layout model (matches the DA authoring structure across all sites):
+     1. Link section   .section:first-child  — list of legal/nav links,
+                        optionally rendered as a coloured band.
+     2. Body section   .columns-container    — a 2-column columns block:
+                          • column 1 = legal / copyright copy
+                          • column 2 = optional phone pill, social icons,
+                                       and the company (Lundbeck) logo
+     Optional per-site content (phone pill, social icons) renders only
+     when the author includes it, so unused slots cost nothing.
+   ===================================================================== */
 
 footer { /* @boilerplate */
-  background-color: var(--light-color); /* @boilerplate */
-  font-size: var(--body-font-size-xs); /* @boilerplate */
-}
-
-footer .footer > div { /* @boilerplate */
-  margin: auto; /* @boilerplate */
-  max-width: var(--footer-max-width); /* @boilerplate */
-  padding: var(--footer-padding); /* @boilerplate */
-}
+  background-color: var(--footer-background); /* @boilerplate */
+  color: var(--footer-text-color); /* @boilerplate */
+  font-family: var(--footer-font-family); /* @boilerplate */
+  font-size: var(--footer-font-size); /* @boilerplate */
+} /* @boilerplate */
 
 footer .footer p { /* @boilerplate */
   margin: 0; /* @boilerplate */
+} /* @boilerplate */
+
+footer .footer > div { /* @boilerplate */
+  margin: 0; /* @boilerplate */
+} /* @boilerplate */
+
+/* ===== Link section: links flow inline and wrap as a single centered
+   paragraph at every width (never stack one-per-line). Renders as a
+   full-width coloured band when --footer-linkbar-background is set to a
+   colour; stays transparent (inline list) when it isn't. ===== */
+footer .footer .section:first-child { /* @boilerplate */
+  padding: var(--footer-linkbar-padding); /* @boilerplate */
+  background-color: var(--footer-linkbar-background); /* @boilerplate */
+} /* @boilerplate */
+
+footer .footer .section:first-child .default-content-wrapper {
+  box-sizing: border-box;
+  max-width: var(--footer-max-width);
+  margin: 0 auto;
+  padding: var(--footer-linkbar-inner-padding);
+  text-align: var(--footer-link-text-align);
 }
 
+footer .footer .section:first-child p {
+  display: inline-block;
+  margin-right: var(--footer-link-gap-mobile, var(--footer-link-gap));
+}
+
+footer .footer .section:first-child p:last-child {
+  margin-right: 0;
+}
+
+footer .footer .section:first-child a {
+  color: var(--footer-link-color);
+  font-size: var(--footer-link-font-size);
+  font-weight: var(--footer-link-font-weight);
+  line-height: var(--footer-link-line-height);
+  letter-spacing: var(--footer-link-letter-spacing);
+  text-decoration: var(--footer-link-decoration);
+  transition: color var(--footer-transition);
+}
+
+footer .footer .section:first-child a:hover { /* @boilerplate */
+  color: var(--footer-link-hover-color); /* @boilerplate */
+  text-decoration: var(--footer-link-hover-decoration); /* @boilerplate */
+} /* @boilerplate */
+
+/* ===== Body: legal copy (column 1) + assistance/social/logo (column 2) ===== */
+footer .footer .columns-container { /* @boilerplate */
+  padding: var(--footer-body-padding-mobile); /* @boilerplate */
+  background-color: var(--footer-background); /* @boilerplate */
+} /* @boilerplate */
+
+footer .footer .columns-container > * {
+  box-sizing: border-box;
+  max-width: var(--footer-max-width);
+  margin-inline: auto;
+  padding-inline: 15px;
+}
+
+/* legal copy: always left-aligned, at every width */
+footer .footer .columns p {
+  color: var(--footer-legal-color);
+  font-size: var(--footer-legal-font-size);
+  line-height: var(--footer-legal-line-height);
+  text-align: left;
+}
+
+footer .footer .columns-container .columns > div > :first-child p:not(:last-child) { /* @boilerplate */
+  margin-bottom: var(--footer-legal-margin-bottom); /* @boilerplate */
+} /* @boilerplate */
+
+/* mobile assistance row: label on the left, phone pill on the right.
+   Only present when the author adds a phone pill (e.g. Vyepti). */
+footer .footer .columns-container > .default-content-wrapper { /* @boilerplate */
+  display: flex; /* @boilerplate */
+  align-items: center; /* @boilerplate */
+  justify-content: space-between; /* @boilerplate */
+  gap: var(--footer-mobile-assist-gap); /* @boilerplate */
+  margin-bottom: var(--footer-assist-mobile-margin-bottom); /* @boilerplate */
+} /* @boilerplate */
+
+/* "For assistance, call" label — mobile copy (in the standalone wrapper) */
+footer .footer .columns-container > .default-content-wrapper p strong { /* @boilerplate */
+  color: var(--footer-assist-color); /* @boilerplate */
+  font-size: var(--footer-assist-font-size-mobile); /* @boilerplate */
+  font-weight: var(--footer-assist-font-weight); /* @boilerplate */
+  line-height: var(--footer-assist-line-height); /* @boilerplate */
+} /* @boilerplate */
+
+/* "For assistance, call" label — desktop copy (in the right column) */
+footer .footer .columns-container p:has(.hide-mobile) strong {
+  color: var(--footer-assist-color);
+  font-size: var(--footer-assist-font-size-tablet, var(--footer-assist-font-size));
+  font-weight: var(--footer-assist-font-weight);
+  line-height: var(--footer-assist-line-height);
+}
+
+/* phone pill — styled wherever a tel: link appears (mobile wrapper + desktop
+   right column). The icon is supplied via --footer-phone-icon-image. */
+footer .footer a[href^="tel:"] { /* @boilerplate */
+  display: inline-block; /* @boilerplate */
+  padding: var(--footer-phone-padding); /* @boilerplate */
+  border-radius: var(--footer-phone-radius); /* @boilerplate */
+  background-color: var(--footer-phone-background); /* @boilerplate */
+  background-image: var(--footer-phone-icon-image); /* @boilerplate */
+  background-repeat: no-repeat; /* @boilerplate */
+  background-position: var(--footer-phone-icon-position); /* @boilerplate */
+  background-size: var(--footer-phone-icon-size); /* @boilerplate */
+  color: var(--footer-phone-color); /* @boilerplate */
+  font-size: var(--footer-phone-font-size); /* @boilerplate */
+  font-weight: var(--footer-phone-font-weight); /* @boilerplate */
+  line-height: var(--footer-phone-line-height); /* @boilerplate */
+  text-decoration: none; /* @boilerplate */
+  white-space: nowrap; /* @boilerplate */
+  transition: background-color var(--footer-transition); /* @boilerplate */
+} /* @boilerplate */
+
+footer .footer a[href^="tel:"]:hover { /* @boilerplate */
+  background-color: var(--footer-phone-hover-background); /* @boilerplate */
+} /* @boilerplate */
+
+/* social icons + company logo: each is a <p> wrapping an <a><picture><img> */
+footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) { /* @boilerplate */
+  display: inline-block; /* @boilerplate */
+  margin-right: var(--footer-social-icon-gap); /* @boilerplate */
+  vertical-align: middle; /* @boilerplate */
+  margin-top: var(--footer-social-row-margin-top-mobile, 0);
+}
+
+footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) img { /* @boilerplate */
+  display: block; /* @boilerplate */
+  width: var(--footer-social-icon-width); /* @boilerplate */
+  height: auto; /* @boilerplate */
+} /* @boilerplate */
+
+/* last image is the company (Lundbeck) logo — larger, gapped from the icons,
+   and always pinned to the right edge (float works at every width; flex
+   items ignore float, so this is a no-op once the ≥768px flex layout below
+   takes over and orders it there instead). */
+footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child {
+  float: right;
+  margin-right: 0;
+  margin-left: var(--footer-logo-margin-left);
+}
+
+footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child img { /* @boilerplate */
+  width: var(--footer-logo-width); /* @boilerplate */
+} /* @boilerplate */
+
 @media (width >= 768px) { /* @boilerplate */
-  footer .footer > div { /* @boilerplate */
-    padding: var(--footer-padding-desktop); /* @boilerplate */
+  footer .footer .columns-container { /* @boilerplate */
+    padding: var(--footer-body-padding); /* @boilerplate */
+  } /* @boilerplate */
+
+  /* desktop: the mobile assistance wrapper is empty (its content is hidden),
+     so drop its mobile bottom margin to avoid dead space above the columns */
+  footer .footer .columns-container > .default-content-wrapper { /* @boilerplate */
+    margin-bottom: 0; /* @boilerplate */
+  } /* @boilerplate */
+
+  footer .footer .section:first-child {
+    padding: var(--footer-linkbar-padding-desktop, var(--footer-linkbar-padding));
+  }
+
+  footer .footer .section:first-child .default-content-wrapper {
+    padding: var(--footer-linkbar-inner-padding-desktop, var(--footer-linkbar-inner-padding));
+  }
+
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) img {
+    width: var(--footer-social-icon-width-desktop, var(--footer-social-icon-width));
+  }
+
+  footer .footer a[href^="tel:"] {
+    background-position: var(--footer-phone-icon-position-desktop, var(--footer-phone-icon-position));
+  }
+
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child img {
+    width: var(--footer-logo-width-tablet, var(--footer-logo-width));
+  }
+
+  footer .footer .section:first-child a { /* @boilerplate */
+    font-size: var(--footer-link-font-size-desktop); /* @boilerplate */
+    letter-spacing: var(--footer-link-letter-spacing-desktop);
+  } /* @boilerplate */
+
+  footer .footer .section:first-child p {
+    margin-right: var(--footer-link-gap);
+  }
+
+  footer .footer .columns p {
+    line-height: var(--footer-legal-line-height-desktop, var(--footer-legal-line-height));
+  }
+
+  footer .footer .columns-container .columns > div > :first-child p:not(:last-child) {
+    margin-bottom: var(--footer-legal-margin-bottom-desktop, var(--footer-legal-margin-bottom));
+  }
+
+  /* two columns: legal / right column, top-aligned. margin-inline cancels the
+     parent's 15px padding-inline (added by .columns-container > *) so the
+     columns split against the full row width — same "container padding +
+     row negative-margin + column padding" gutter math the source's grid
+     uses, not just a single layer of padding. */
+  footer .footer .columns.columns-2-cols > div { /* @boilerplate */
+    align-items: flex-start; /* @boilerplate */
+    gap: 0; /* @boilerplate */
+    margin-inline: -15px;
+  } /* @boilerplate */
+
+  /* tablet (768-991px): even split — the desktop ratio below kicks in at 992px,
+     matching the source's real col-md/col-lg breakpoint (and styles.css's own
+     existing 992px --max-width-site tier) */
+  footer .footer .columns.columns-2-cols > div > :first-child {
+    box-sizing: border-box;
+    flex: 0 0 var(--footer-legal-width-tablet, var(--footer-legal-width));
+    padding-inline: 15px;
+  }
+
+  footer .footer .columns.columns-2-cols > div > :nth-child(2) { /* @boilerplate */
+    display: flex; /* @boilerplate */
+    box-sizing: border-box;
+    flex: 0 0 var(--footer-right-width-tablet, var(--footer-right-width));
+    flex-wrap: wrap; /* @boilerplate */
+    align-items: center; /* @boilerplate */
+    justify-content: flex-end; /* @boilerplate */
+    padding-inline: 15px;
+  }
+
+  /* assistance label sits inline before the phone pill (both wrapped in
+     .hide-mobile spans, visible on desktop) */
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(.hide-mobile) { /* @boilerplate */
+    order: 1; /* @boilerplate */
+  } /* @boilerplate */
+
+  /* gap between the "For assistance, call" label and the phone pill */
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:first-child { /* @boilerplate */
+    margin-right: var(--footer-assist-margin-right); /* @boilerplate */
+  } /* @boilerplate */
+
+  /* forced flex line break so social icons + logo drop to a second row */
+  footer .footer .columns-container .columns > div > :nth-child(2)::after { /* @boilerplate */
+    content: ''; /* @boilerplate */
+    order: 2; /* @boilerplate */
+    flex-basis: 100%; /* @boilerplate */
+    height: 0; /* @boilerplate */
+  } /* @boilerplate */
+
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img) { /* @boilerplate */
+    order: 3; /* @boilerplate */
+    margin-top: var(--footer-social-row-margin-top); /* @boilerplate */
+    margin-right: var(--footer-social-icon-gap-desktop, var(--footer-social-icon-gap));
+  }
+} /* @boilerplate */
+
+/* tablet/desktop split point (992px): reasserts the real legal/right column
+   ratio, undoing the 768-991px tablet override above */
+@media (width >= 992px) {
+  footer .footer .columns.columns-2-cols > div > :first-child {
+    flex: 0 0 var(--footer-legal-width);
+  }
+
+  footer .footer .columns.columns-2-cols > div > :nth-child(2) {
+    flex: 0 0 var(--footer-right-width);
+  }
+
+  footer .footer .columns-container p:has(.hide-mobile) strong {
+    font-size: var(--footer-assist-font-size);
+  }
+}
+
+/* large desktop (1200px+): full-size Lundbeck logo */
+@media (width >= 1200px) {
+  footer .footer .columns-container .columns > div > :nth-child(2) > p:has(img):last-child img {
+    width: var(--footer-logo-width-desktop, var(--footer-logo-width));
   }
 }

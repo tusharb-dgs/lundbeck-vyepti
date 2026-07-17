@@ -10,7 +10,9 @@ main > .section.hero-container {
   margin: 0;
 }
 
-.hero-container .hero-wrapper {
+/* higher specificity than the global `main > .section > div:not(.bg-image)`
+   gutter rule so the hero stays full-bleed with no side white bars */
+main > .section.hero-container > .hero-wrapper {
   max-width: unset;
   padding: 0;
 }
@@ -449,8 +451,6 @@ main > .section.hero-container {
   color: var(--hero-text-color-light);
 }
 
-
-
 @media (width >= 600px) {
   .hero.single {
     min-height: var(--hero-single-min-height-tablet);
@@ -583,6 +583,7 @@ main > .section.hero-container {
 .section.single-light .hero > div:last-of-type a, .section.single-dark .hero > div:last-of-type a {
   margin-top:24px;
 }
+
 }
 
 @media (width >= 992px) {

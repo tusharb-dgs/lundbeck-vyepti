@@ -1,45 +1,166 @@
-/* accordion design tokens — mobile-first defaults; tablet+ overrides live in the
-   width >= 768px block of accordion.css */
+/* accordion design tokens — typography/spacing from vyepti.com/vyepti-faq */
 :root { /* @libs */
   /* item card */
   --accordion-item-bg: var(--card-bg-light); /* @libs */
   --accordion-item-radius: 12px; /* @libs */
-  --accordion-item-gap: 16px; /* @libs */
-  --accordion-item-padding: 20px 16px; /* @libs */
+  --accordion-item-gap: 24px; /* @libs — vyepti-faq :not(:first-child) margin-top */
+  --accordion-item-padding: 19px 15px 19px 16px; /* @libs */
 
-  /* label / title */
-  --accordion-label-color: var(--text-color); /* @libs */
+  /* label / title — vyepti-faq .cmp-accordion__title */
+  --accordion-label-color: #484848; /* @libs */
   --accordion-label-active-color: var(--brand-secondary); /* @libs */
-  --accordion-label-font-size: var(--heading-font-size-xl); /* @libs */
-  --accordion-label-font-weight: 400; /* @libs */
+  --accordion-label-font-size: 24px; /* @libs */
+  --accordion-label-font-weight: 600; /* @libs */
   --accordion-label-strong-weight: 600; /* @libs */
-  --accordion-label-line-height: 1.1; /* @libs */
-  --accordion-label-padding-right: 34px; /* @libs */
+  --accordion-label-line-height: 26px; /* @libs — vyepti-faq mobile, not 31.2px */
+  --accordion-label-line-height-active: 24px; /* @libs — expanded title, mobile */
 
-  /* expand/collapse chevron */
-  --accordion-icon-size: 15px; /* @libs */
+  /* expand/collapse chevron — 12px border chevron ≈ live 22×12px SVG */
+  --accordion-icon-size: 13px; /* @libs */
   --accordion-icon-thickness: 2px; /* @libs */
   --accordion-icon-color: var(--brand-primary); /* @libs */
-  --accordion-icon-right: 4px; /* @libs */
+  --accordion-icon-right: 0; /* @libs */
+  --accordion-label-padding-right: calc(var(--accordion-icon-size) + 4px); /* @libs */
 
-  /* body / panel */
-  --accordion-body-gap: 16px; /* @libs */
-  --accordion-body-color: var(--text-color); /* @libs */
-  --accordion-body-font-size: var(--body-font-size-s); /* @libs */
-  --accordion-body-line-height: 1.45; /* @libs */
-  --accordion-body-list-font-size: var(--body-font-size-ms); /* @libs */
+  /* body / panel — .rteComponent copy inside expanded panels */
+  --accordion-body-gap: 22px; /* @libs — panel margin-top on vyepti-faq */
+  --accordion-body-color: #484848; /* @libs */
+  --accordion-body-font-size: 16px; /* @libs */
+  --accordion-body-line-height: 22px; /* @libs */
+  --accordion-body-font-weight: 400; /* @libs */
+  --accordion-body-list-font-size: 16px; /* @libs */
+  --accordion-body-list-line-height: 18px; /* @libs — vyepti-faq li line-height, tighter than paragraphs */
+  --accordion-body-list-margin-bottom: 15px; /* @libs — space below the list */
+  --accordion-body-heading-font-size: 20px; /* @libs */
+  --accordion-body-heading-line-height: 22px; /* @libs */
+  --accordion-body-heading-font-weight: 600; /* @libs */
+  --accordion-body-paragraph-margin-top: 16px; /* @libs — vyepti-faq inter-block rhythm */
+  --accordion-body-heading-spacing: 24px; /* @libs */
+  --accordion-body-list-margin-top: 16px; /* @libs */
+  --accordion-body-list-indent: 19px; /* @libs */
+  --accordion-body-list-item-gap: 7px; /* @libs */
+  --accordion-body-panel-padding-bottom: 26px; /* @libs — last expanded panel, mobile */
 
   /* motion */
   --accordion-transition-duration: 0.3s; /* @libs */
   --accordion-icon-transition-duration: 0.5s; /* @libs */
+
+  /* scroll-into-view when an item is toggled (matches vyepti.com/vyepti-faq) */
+  --accordion-scroll-offset: 40px; /* @libs */
+  --accordion-scroll-duration: 500ms; /* @libs */
 }
 
-/* tablet+ scale-ups */
-@media (width >= 768px) { /* @libs */
+.accordion > ul > li { /* @libs */
+  scroll-margin-top: var(--accordion-scroll-offset); /* @libs */
+}
+
+/* label uses body face on vyepti-faq (lighter than heading weight defaults) */
+.accordion > ul > li .accordion-item-label { /* @libs */
+  font-family: var(--body-font-family); /* @libs */
+  line-height: var(--accordion-label-line-height); /* @libs */
+  -webkit-font-smoothing: antialiased; /* @libs */
+}
+
+.accordion > ul > li.active .accordion-item-label { /* @libs */
+  line-height: var(--accordion-label-line-height-active); /* @libs */
+  padding-top: 2px; /* @libs — vyepti-faq expanded header offset */
+}
+
+/* chevron stays teal when expanded; title still uses --accordion-label-active-color via accordion.css */
+.accordion > ul > li.accordion-item.active .accordion-item-label::after { /* @libs */
+  border-color: var(--accordion-icon-color); /* @libs */
+}
+
+/* panel headings — vyepti-faq .rteComponent h3 */
+.accordion > ul > li .accordion-item-body h3 { /* @libs */
+  margin: 0; /* @libs */
+  padding: 0; /* @libs */
+  font-family: var(--body-font-family); /* @libs */
+  font-size: var(--accordion-body-heading-font-size); /* @libs */
+  font-weight: var(--accordion-body-heading-font-weight); /* @libs */
+  line-height: var(--accordion-body-heading-line-height); /* @libs */
+  color: var(--accordion-body-color); /* @libs */
+  -webkit-font-smoothing: antialiased; /* @libs */
+}
+
+.accordion > ul > li .accordion-item-body h3:not(:first-child) { /* @libs */
+  margin-top: var(--accordion-body-heading-spacing); /* @libs */
+}
+
+/* panel paragraphs — vyepti-faq .rteComponent p */
+.accordion > ul > li .accordion-item-body p { /* @libs */
+  margin: var(--accordion-body-paragraph-margin-top) 0 0; /* @libs */
+  padding: 0; /* @libs */
+  font-family: var(--body-font-family); /* @libs */
+  font-size: var(--accordion-body-font-size); /* @libs */
+  font-weight: var(--accordion-body-font-weight); /* @libs */
+  line-height: var(--accordion-body-line-height); /* @libs */
+  color: var(--accordion-body-color); /* @libs */
+  -webkit-font-smoothing: antialiased; /* @libs */
+}
+
+.accordion > ul > li .accordion-item-body h3 + p { /* @libs */
+  margin-top: var(--accordion-body-paragraph-margin-top); /* @libs */
+}
+
+/* panel lists — vyepti-faq .rteComponent ul */
+.accordion > ul > li .accordion-item-body ul { /* @libs */
+  list-style: none; /* @libs */
+  margin: var(--accordion-body-list-margin-top) 0 var(--accordion-body-list-margin-bottom); /* @libs */
+  padding: 0; /* @libs */
+}
+
+.accordion > ul > li .accordion-item-body ul li { /* @libs */
+  position: relative; /* @libs */
+  margin: 0 0 var(--accordion-body-list-item-gap); /* @libs */
+  padding-left: var(--accordion-body-list-indent); /* @libs */
+  font-family: var(--body-font-family); /* @libs */
+  font-size: var(--accordion-body-list-font-size); /* @libs */
+  font-weight: var(--accordion-body-font-weight); /* @libs */
+  line-height: var(--accordion-body-list-line-height); /* @libs */
+  color: var(--accordion-body-color); /* @libs */
+  -webkit-font-smoothing: antialiased; /* @libs */
+}
+
+.accordion > ul > li .accordion-item-body ul li::before { /* @libs */
+  content: '\2022'; /* @libs */
+  position: absolute; /* @libs */
+  left: 0; /* @libs */
+  top: -2px; /* @libs */
+  color: var(--brand-secondary); /* @libs */
+}
+
+.accordion > ul > li .accordion-item-body ul li:last-child { /* @libs */
+  margin-bottom: 0; /* @libs */
+}
+
+.accordion > ul > li.active:last-child .accordion-item-body { /* @libs */
+  padding-bottom: var(--accordion-body-panel-padding-bottom); /* @libs */
+}
+
+/* tablet+ scale-ups — vyepti-faq keeps mobile card padding until 992px */
+
+@media (width >= 992px) { /* @libs */
   :root { /* @libs */
-    --accordion-item-gap: 24px; /* @libs */
-    --accordion-item-padding: 32px 41px; /* @libs */
-    --accordion-label-line-height: 1.3; /* @libs */
-    --accordion-label-padding-right: 38px; /* @libs */
+    --accordion-item-padding: 32px 57px 32px 41px; /* @libs */
+    --accordion-label-font-size: 24px; /* @libs — vyepti-faq title stays 24px */
+    --accordion-label-line-height: 22px; /* @libs */
+    --accordion-label-line-height-active: 25px; /* @libs — expanded title, desktop */
+    --accordion-body-gap: 16px; /* @libs */
+    --accordion-body-heading-font-size: 22px; /* @libs */
+    --accordion-body-paragraph-margin-top: 16px; /* @libs — vyepti-faq inter-block rhythm */
+    --accordion-body-list-margin-top: 16px; /* @libs */
+    --accordion-body-list-indent: 23px; /* @libs */
+    --accordion-body-content-indent: 58px; /* @libs */
+    --accordion-body-panel-padding-bottom: 13px; /* @libs */
+  }
+
+  .accordion > ul > li.active .accordion-item-label { /* @libs */
+    padding-top: 0; /* @libs */
+  }
+
+  .accordion > ul > li .accordion-item-body p, /* @libs */
+  .accordion > ul > li .accordion-item-body ul { /* @libs */
+    padding-left: var(--accordion-body-content-indent); /* @libs */
   }
 }

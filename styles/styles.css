@@ -59,7 +59,17 @@
   --section-divider-width: 1px; /* @libs */
   --section-divider-color: var(--link-hover-color); /* @libs */
   --section-padding: 24px;
-  --flex-group-gap: 24px;
+  --flex-group-gap: 30px;
+  --flex-group-narrow-copy-gap: 60px;
+  --div-width-margin: auto;
+  --div-width-align-items: flex-start;
+
+  /* branded body bullets — large rose dot in a hanging indent (matches
+     vyepti.com body lists). Applied globally to authored content lists;
+     the Approved Use / ISI section is excluded and keeps plain bullets. */
+  --list-bullet-color: var(--brand-secondary);
+  --list-bullet-size: 30px;
+  --list-bullet-indent: 1.6em;
   
   /* fonts */
   --body-font-family: proxima-nova, proxima-nova-fallback, sans-serif; /* @libs */
@@ -85,7 +95,11 @@
   --heading-font-size-s: 18px; /* @libs */
   --heading-font-size-xs: 16px; /* @libs */
 
-  /* layout */
+  /* layout: mobile-first ceiling below is a no-op cap (nothing is ever this
+     wide under 576px); Bootstrap-container-equivalent steps (540/720/960/1140)
+     are applied below at 576/768/992/1200px so every var(--max-width-site)
+     consumer (footer, hero, isi, main > .section > div, ...) narrows in
+     step with the source instead of jumping straight to 1140px at 992px. */
   --max-width-site: 1140px; /* @libs */
   --section-padding-vertical: 40px; /* @libs */
   --icon-size: 24px; /* @libs */
@@ -93,6 +107,7 @@
 
   /* nav heights */
   --nav-height: 200px; /* @libs */
+  --nav-height-mobile: 124px; /* fits the mobile nav content (no dead space) */
   --nav-brand-row-height-mobile: 97px; /* @libs */
   --breadcrumbs-height: 34px; /* @libs */
   --header-height: var(--nav-height); /* @libs */
@@ -175,6 +190,16 @@
   src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial'); /* @libs */
 }
 
+/* Extra-bold (800) headings had no fallback face, so weight 800 fell back to a
+   synthesized bold ~20% wider than Proxima Nova ExtraBold — changing headline
+   wrap points. size-adjust matches the fallback's width to the real font. */
+@font-face {
+  font-family: proxima-nova-fallback;
+  font-weight: 800;
+  size-adjust: 84%;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial');
+}
+
 body { /* @libs */
   display: none; /* @libs */
   margin: 0; /* @libs */
@@ -189,14 +214,29 @@ body.appear { /* @libs */
   display: block; /* @libs */
 }
 
-.color-secondary {
+.color-primary, .brand-primary, .teal {
+  color: var(--brand-primary);
+
+  --link-color: var(--brand-primary);
+}
+
+.color-secondary, .brand-secondary, .rose {
   color: var(--brand-secondary);
 
   --link-color: var(--brand-secondary);
 }
 
+/* single-purpose text utility; !important so it reliably wins over
+   block-level paragraph rules (e.g. columns' 22px line-height) wherever
+   an author or block explicitly opts in. */
+.small-text {
+  font-size: var(--body-font-size-xs) !important;
+  line-height: 1.3 !important;
+}
+
 header { /* @libs */
-  height: var(--header-height); /* @libs */
+  min-height: var(--nav-height-mobile); /* fits mobile nav; grows to --nav-height at 992px+ */
+  height: auto; /* fit nav content so it never overflows onto main */
 }
 
 header .header,
@@ -330,10 +370,8 @@ button { /* @libs */
   line-height: var(--button-line-height); /* @libs */
   text-align: center; /* @libs */
   text-decoration: none; /* @libs */
-  white-space: nowrap; /* @libs */
+  white-space: normal; /* matches production: wrap long labels instead of truncating */
   cursor: pointer; /* @libs */
-  overflow: hidden; /* @libs */
-  text-overflow: ellipsis; /* @libs */
   transition: var(--button-transition); /* @libs */
 }
 
@@ -509,6 +547,52 @@ main img { /* @libs */
   object-fit: contain; /* @libs */
 }
 
+/* branded body bullets — a large rose dot in a hanging indent, matching
+   vyepti.com body lists. Scoped to authored content lists (classless <ul> in a
+   section); the exclusions live in :where() so they add no specificity, letting
+   the .isi reset below win with a plain class selector. Excludes: icon-bullet
+   lists (custom SVG bullets), class-bearing lists, and a block's own top-level
+   list (`.block > ul`, e.g. cards) — only nested authored copy lists get the
+   dot. The fixed .isi-bar lives in <body>, outside main, so it is unaffected. */
+main .section ul:where(:not([class], :has(> li .icon), .block > *)) {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+main .section ul:where(:not([class], :has(> li .icon), .block > *)) > li {
+  position: relative;
+  padding-left: var(--list-bullet-indent);
+}
+
+main .section ul:where(:not([class], :has(> li .icon), .block > *)) > li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--list-bullet-color);
+  font-size: var(--list-bullet-size);
+  line-height: var(--body-font-size-s);
+}
+
+/* Approved Use / ISI section keeps plain default bullets (no rose dot). The
+   global rule above strips list-style/padding off classless <ul>s, so restore
+   the native disc marker and indent here too, not just the <li> overrides. */
+main .isi ul {
+  list-style: disc;
+  padding-left: 40px;
+  margin-left: 0;
+}
+
+main .isi ul > li {
+  position: static;
+  padding-left: 0;
+}
+
+main .isi ul > li::before {
+  content: normal;
+}
+
 /* icon bullet lists — :has() prevents FOUC before JS adds .icon-bullets */
 main ul:has(> li > .icon, > li > :is(strong, em, a) > .icon) { /* @libs */
   list-style: none; /* @libs */
@@ -568,15 +652,54 @@ main > .section { /* @libs */
   margin: 0; /* @libs */
 }
 
+main > .section > div:not(.bg-image) {
+  margin: auto;
+  padding: 0 15px;
+}
+
+/* Section metadata: background image sits behind content */
+main > .section:has(> .bg-image) { /* @boilerplate */
+  position: relative; /* @boilerplate */
+  overflow: hidden; /* @boilerplate */
+}
+
+main > .section:has(> .bg-image) > div:not(.bg-image) { /* @boilerplate */
+  position: relative; /* @boilerplate */
+  z-index: 1; /* @boilerplate */
+}
+
+main > .section > .bg-image { /* @boilerplate */
+  position: absolute; /* @boilerplate */
+  inset: 0; /* @boilerplate */
+  z-index: 0; /* @boilerplate */
+  pointer-events: none; /* @boilerplate */
+}
+
+main > .section > .bg-image picture,
+main > .section > .bg-image img { /* @boilerplate */
+  display: block; /* @boilerplate */
+  width: 100%; /* @boilerplate */
+  height: 100%; /* @boilerplate */
+}
+
+main > .section > .bg-image img { /* @boilerplate */
+  object-fit: cover; /* @boilerplate */
+}
+
+main > .section:first-of-type { /* @boilerplate */
+  margin-top: 0; /* @boilerplate */
+}
+
 main > .section.divider > div:last-child { /* @libs */
   border-bottom: var(--section-divider-width) solid var(--section-divider-color); /* @libs */
   padding-bottom: var(--section-padding);
 }
 
-main > .section > div { /* @libs */
-  max-width: 540px; /* @libs */
-  margin: auto; /* @libs */
-  padding: 0 15px; /* @libs */
+main > .section > div {
+  box-sizing: border-box;
+  max-width: 540px;
+  margin: auto;
+  padding: 0 15px;
 }
 
 /* flex sections — adjacent sections with style=flex are wrapped by JS in a
@@ -586,6 +709,10 @@ main .flex-group {
   display: flex;
   flex-direction: column;
   gap: var(--flex-group-gap);
+  box-sizing: border-box;
+  max-width: var(--max-width-site);
+  margin: var(--section-padding-vertical) auto;
+  padding: 0 15px;
 }
 
 main .flex-group > .section.flex {
@@ -696,8 +823,8 @@ main .section.dark a.button.secondary:focus { /* @libs */
      centered with margin auto: <576 fluid, 576+ = 540, 768+ = 720,
      992+ = 960, 1200+ = 1140 (Bootstrap container widths), each with 15px gutters. */
 main .section.stats-callout {
-  max-width: 100%;
-  margin: 0;
+  max-width: var(--max-width-site); /* @boilerplate */
+  margin: auto;
   background-image: linear-gradient(180deg, #e8f3f5 20%, #fff 53%, #fff 100%);
   border-radius: 23px 23px 0 0;
   padding: var(--section-padding-vertical) 15px;
@@ -720,6 +847,10 @@ main .section.stats-callout h4 {
 }
 
 @media (width >= 576px) {
+  :root {
+    --max-width-site: 540px;
+  }
+
   main .section.stats-callout > div:not(.bg-image) {
     max-width: 540px;
   }
@@ -727,6 +858,8 @@ main .section.stats-callout h4 {
 
 @media (width >= 768px) { /* @libs */
   :root { /* @libs */
+    --max-width-site: 720px;
+
     /* heading sizes scale up on desktop */
     --body-font-size-m: 24px; /* @libs */
     --body-font-size-ms: 18px; /* @libs */
@@ -748,6 +881,42 @@ main .section.stats-callout h4 {
       display: revert;
     }
 
+    /* ==== Start widths ==== */
+
+    div[class^="width-"], div[class*=" width-"] {
+      margin: var(--div-width-margin);
+    }
+    
+    .width-75 {
+      width: 73.5%;
+    }
+    
+    .width-66 {
+      width: 64.5%;
+    }
+    
+    .width-50 {
+      width: 48.5%;
+    }
+    
+    .width-33 {
+      width: 31.5%;
+    }
+    
+    .width-25 {
+      width: 23.5%;
+    }
+    
+    .columns > div:has(> div[class^="width-"],> div[class*=" width-"]) {
+      align-items: var(--div-width-align-items);
+    
+      > div[class^="width-"],> div[class*=" width-"] {
+        flex: none;
+      }
+    }
+    
+    /* ==== End widths ==== */
+
     main .section.stats-callout {
       padding: var(--section-padding-vertical) 0;
     }
@@ -762,17 +931,21 @@ main .section.stats-callout h4 {
   }
 
 @media (width >= 992px) { /* @libs */
+  :root {
+    --max-width-site: 960px;
+  }
+
   body[data-breadcrumbs] { /* @libs */
     --header-height: calc(var(--nav-height) + var(--breadcrumbs-height)); /* @libs */
   }
   
   header { /* @libs */
-    height: calc(var(--nav-height) + 23px); /* @libs */
+    min-height: calc(var(--nav-height) + 23px); /* @libs */
+    height: auto;
 }
 
-main > .section > div { /* @libs */
-  max-width: var(--max-width-site); /* @libs */
-  padding: 0 32px; /* @libs */
+main > .section > div {
+  max-width: var(--max-width-site);
 }
 
 /* flex sections — equal-width columns side-by-side; section-level only */
@@ -786,6 +959,18 @@ main .flex-group > .section.flex {
   min-width: 0;
 }
 
+/* narrow-copy flex-group (what-to-expect "Choosing a location" + "Prepare for
+   each step"): the source is NOT a 50/50 split — the copy column is fixed to
+   its readable measure and the companion column fills the rest, with a wider
+   gutter between them. */
+main .flex-group:has(> .section.flex .columns.narrow-copy) {
+  gap: var(--flex-group-narrow-copy-gap);
+}
+
+main .flex-group > .section.flex:has(.columns.narrow-copy) {
+  flex: 0 0 var(--columns-narrow-copy-max-width);
+}
+
 main .section.stats-callout > div:not(.bg-image) {
   max-width: 960px;
 }
@@ -796,8 +981,13 @@ main .section.stats-callout > div:not(.bg-image) {
 }
 
 @media (width >= 1200px) {
+  :root {
+    --max-width-site: 1140px;
+  }
+
   header { /* @libs */
-    height: var(--nav-height); /* @libs */
+    min-height: var(--nav-height); /* @libs */
+    height: auto;
   }
 
   main .section.stats-callout > div:not(.bg-image) {

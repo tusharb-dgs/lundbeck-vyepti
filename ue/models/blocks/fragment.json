@@ -21,13 +21,13 @@
       "fields": [
         {
           "component": "text",
-          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]",
+          "name": "urlText",
           "label": "Fragment URL",
           "required": true
         },
         {
           "component": "text",
-          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)",
+          "name": "url",
           "label": "Fragment URL Text"
         }
       ]

@@ -1,0 +1,365 @@
+@import url('./accordion-cards-tokens.css');
+
+.accordion-cards > .accordion-cards-sections {
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-cards {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.accordion-cards .accordion-cards-item {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* full-width gradient header bar */
+.accordion-cards .accordion-cards-item-header {
+  margin: var(--accordion-cards-section-gap) 0 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+/* reset global button styles (pill radius, primary fill, etc.) */
+.accordion-cards .accordion-cards-item-trigger {
+  appearance: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: var(--accordion-cards-header-padding);
+  background-color: transparent;
+  background-image: var(--accordion-cards-header-bg);
+  color: var(--accordion-cards-header-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--accordion-cards-header-font-size);
+  font-weight: var(--accordion-cards-header-font-weight);
+  line-height: var(--accordion-cards-header-line-height);
+  text-align: left;
+  text-decoration: none;
+  white-space: normal;
+  overflow: visible;
+  cursor: pointer;
+  transition: none;
+  outline: 0;
+}
+
+.accordion-cards .accordion-cards-item-trigger:hover,
+.accordion-cards .accordion-cards-item-trigger:focus {
+  background-color: transparent;
+  background-image: var(--accordion-cards-header-bg);
+  border-color: transparent;
+  color: var(--accordion-cards-header-color);
+}
+
+.accordion-cards .accordion-cards-item-title {
+  flex: 1;
+  padding: var(--accordion-cards-header-title-padding);
+  cursor: pointer;
+}
+
+.accordion-cards .accordion-cards-item-title p {
+  margin: 0;
+}
+
+/* chevron — points up when expanded, down when collapsed */
+.accordion-cards .accordion-cards-item-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--accordion-cards-chevron-width);
+  height: var(--accordion-cards-chevron-height);
+  margin-top: var(--accordion-cards-chevron-margin-top-mobile);
+  margin-right: var(--accordion-cards-chevron-margin-right-mobile);
+  background: var(--accordion-cards-chevron-icon) no-repeat center / contain;
+  transform: rotate(180deg);
+  transform-origin: center;
+  transition: transform var(--accordion-cards-chevron-transition) ease-in-out;
+}
+
+.accordion-cards .accordion-cards-item.is-expanded .accordion-cards-item-icon {
+  transform: rotate(0deg);
+}
+
+/* expandable panel */
+.accordion-cards .accordion-cards-item-panel {
+  display: none;
+  margin-top: var(--accordion-cards-panel-margin-top);
+  padding-left: 15px;
+  padding-right: 15px;
+  cursor: default;
+}
+
+.accordion-cards .accordion-cards-item.is-expanded .accordion-cards-item-panel {
+  display: block;
+  margin-bottom: -8px;
+}
+
+/* optional intro copy above the card columns */
+.accordion-cards .accordion-cards-item-intro {
+  margin: 0 0 var(--accordion-cards-card-spacing);
+  padding: 10px 15px 32px;
+  color: var(--accordion-cards-body-color);
+  font-size: var(--accordion-cards-body-font-size);
+  line-height: 20px;
+  text-align: center;
+}
+
+.accordion-cards .accordion-cards-item-intro p {
+  margin: 0;
+}
+
+/* left / right card columns */
+.accordion-cards .accordion-cards-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--accordion-cards-grid-gap);
+}
+
+.accordion-cards .accordion-cards-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* resource card — image left, content right */
+.accordion-cards .accordion-cards-card {
+  margin-bottom: var(--accordion-cards-card-spacing);
+}
+
+.accordion-cards .accordion-cards-card-image {
+  margin-bottom: 16px;
+  text-align: center;
+  line-height: 0;
+}
+
+.accordion-cards .accordion-cards-card-image img {
+  max-width: var(--accordion-cards-image-max-width);
+  width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+.accordion-cards .accordion-cards-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  text-align: center;
+}
+
+.accordion-cards .accordion-cards-card-content p {
+  margin: 0 0 8px;
+  color: var(--accordion-cards-body-color);
+  font-size: var(--accordion-cards-body-font-size);
+  line-height: var(--accordion-cards-body-line-height);
+}
+
+.accordion-cards .accordion-cards-card-title {
+  margin: 0 0 8px;
+  color: var(--accordion-cards-title-color);
+  font-size: var(--accordion-cards-title-font-size);
+  font-weight: 700;
+  line-height: var(--accordion-cards-title-line-height);
+}
+
+.accordion-cards .accordion-cards-card-content > h3:first-child {
+  margin-top: 0;
+}
+
+.accordion-cards .accordion-cards-card-content p a {
+  color: var(--accordion-cards-link-color);
+  line-height: var(--accordion-cards-body-line-height);
+  font-size: inherit;
+}
+
+/* tile-link style action row — matches live .tile-link */
+.accordion-cards .accordion-cards-card-actions {
+  display: block;
+  width: 100%;
+  margin: 0;
+  line-height: var(--accordion-cards-link-line-height);
+  text-align: center;
+}
+
+/* Action links get the .button class so they carry standard button semantics, but here
+   they read as plain text links + authored icon (matching the live .tile-link row).
+   Override the pill/button chrome. download+icon / email+icon are one link — hover
+   changes both. */
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link,
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:hover,
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:focus {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: var(--accordion-cards-link-font-size);
+  font-weight: var(--accordion-cards-link-font-weight);
+  line-height: var(--accordion-cards-link-line-height);
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  overflow: visible;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link {
+  color: var(--accordion-cards-link-color);
+}
+
+/* suppress the global a.button default arrow — icons here are author-driven only */
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link::after {
+  content: none;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link + .accordion-cards-action-link {
+  margin-left: 52px;
+  gap: 9px;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:hover,
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link:focus {
+  color: var(--accordion-cards-link-hover-color);
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentcolor;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon img {
+  display: none;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="download"] {
+  position: relative;
+  top: 5px;
+  width: 18px;
+  height: 19px;
+  mask: url("/icons/icon-download.svg") no-repeat center / contain;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="mail"] {
+  width: 19px;
+  height: 11px;
+  mask: url("/icons/icon-mail.svg") no-repeat center / contain;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="forward"] {
+  width: 20px;
+  height: 8px;
+  mask: url("/icons/icon-forward-arrow.svg") no-repeat center / contain;
+}
+
+.accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="sign"] {
+  position: relative;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  mask: url("/icons/icon-sign.svg") no-repeat center / contain;
+}
+
+@media (width >= 768px) {
+  .accordion-cards .accordion-cards-item-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .accordion-cards .accordion-cards-item-trigger {
+    align-items: center;
+  }
+
+  .accordion-cards .accordion-cards-item-icon {
+    margin-top: 0;
+    margin-right: var(--accordion-cards-chevron-margin-right-desktop);
+  }
+
+  .accordion-cards .accordion-cards-item-intro {
+    margin-top: -13px;
+    margin-bottom: 0;
+    padding: 0 0 48px 15px;
+    text-align: left;
+  }
+
+  .accordion-cards .accordion-cards-item-intro p {
+    padding-left: 14px;
+  }
+
+  .accordion-cards .accordion-cards-card-actions .accordion-cards-action-link .icon[class*="mail"] {
+    width: 20px;
+    height: 11px;
+  }
+
+  .accordion-cards .accordion-cards-card {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    align-items: start;
+  }
+
+  .accordion-cards .accordion-cards-card-image {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  .accordion-cards .accordion-cards-card-image img {
+    padding-left: 40px;
+  }
+
+  .accordion-cards .accordion-cards-card-content {
+    grid-column: 2;
+    grid-row: 1;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .accordion-cards .accordion-cards-card-content p {
+    text-align: left;
+  }
+
+  .accordion-cards .accordion-cards-card-actions {
+    text-align: left;
+  }
+}
+
+@media (width >= 992px) {
+  .accordion-cards .accordion-cards-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .accordion-cards .accordion-cards-card {
+    grid-template-columns: 36% 64%;
+  }
+
+  .accordion-cards .accordion-cards-card-image {
+    text-align: center;
+  }
+
+  .accordion-cards .accordion-cards-card-image img {
+    padding-left: 0;
+  }
+}
+
+@media (width >= 1200px) {
+  .accordion-cards .accordion-cards-card-image {
+    text-align: left;
+  }
+
+  .accordion-cards .accordion-cards-card-image img {
+    padding-left: 40px;
+  }
+}

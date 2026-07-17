@@ -3,6 +3,7 @@ import { toClassName } from '../../scripts/aem.js';
 function createFieldWrapper(fd) {
   const fieldWrapper = document.createElement('div');
   if (fd.Style) fieldWrapper.className = fd.Style;
+  // eslint-disable-next-line secure-coding/no-ldap-injection -- DOMTokenList.add() for CSS classes, not an LDAP operation
   fieldWrapper.classList.add('field-wrapper', `${fd.Type}-wrapper`);
 
   fieldWrapper.dataset.fieldset = fd.Fieldset;

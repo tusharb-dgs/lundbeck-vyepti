@@ -1,0 +1,171 @@
+main .form-email {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 535px;
+  margin: 0 auto;
+  padding: 24px 20px 32px;
+  border-radius: 8px;
+  background: var(--card-bg-light, #e1f0f6);
+  color: var(--text-color);
+}
+
+main .form-email .form-email-title {
+  margin: 0 0 16px;
+  color: var(--brand-primary);
+  font-family: var(--heading-font-family);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 29px;
+  text-align: center;
+}
+
+main .form-email .form-email-form {
+  padding: 0 11px;
+  text-align: center;
+}
+
+main .form-email .form-email-required-note {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 20px;
+  text-align: left;
+}
+
+main .form-email .form-email-field {
+  margin-bottom: 22px;
+  text-align: left;
+}
+
+main .form-email .form-email-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--brand-primary);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+main .form-email .form-email-field input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #484848;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text-color);
+  font-size: 16px;
+  line-height: 22px;
+}
+
+main .form-email .form-email-field input[aria-invalid="true"] {
+  border-color: var(--brand-secondary);
+}
+
+main .form-email .form-email-field-error {
+  margin: 8px 0 0;
+  color: var(--brand-secondary);
+  font-size: 14px;
+  line-height: 21px;
+}
+
+main .form-email .form-email-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 128px;
+  margin: 16px auto 0;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+main .form-email .form-email-submit-icon {
+  width: 20px;
+  height: 8px;
+  background-color: currentcolor;
+  mask: url("/icons/icon-forward-arrow.svg") no-repeat center / contain;
+}
+
+main .form-email .form-email-terms {
+  margin-top: 16px;
+  text-align: center;
+}
+
+main .form-email .form-email-terms p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+main .form-email .form-email-terms a {
+  text-decoration: underline;
+}
+
+main .form-email .form-email-success {
+  padding: 0 20px 40px;
+  text-align: center;
+}
+
+main .form-email .form-email-success-title {
+  margin: 0 0 8px;
+  color: var(--brand-primary);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+main .form-email .form-email-success-text {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+@media (width >= 768px) {
+  main .form-email {
+    padding: 24px 84px 32px;
+  }
+
+  .modal:has(.form-email) dialog .modal-content {
+    padding: 0 44px 32px;
+  }
+}
+
+.modal:has(.form-email) dialog {
+  width: min(535px, calc(100vw - 30px));
+  max-width: 535px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  border: 0;
+  border-radius: 10px;
+  background: var(--card-bg-light, #eff6f9);
+  color: var(--text-color);
+}
+
+.modal:has(.form-email) dialog .modal-content {
+  max-height: none;
+  overflow-y: visible;
+  padding: 0 20px 32px;
+  margin-top: 0;
+}
+
+/* inside the modal the dialog provides the panel chrome, so the block drops its
+   own background / max-width / padding */
+main .modal:has(.form-email) .form-email {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+
+main .modal:has(.form-email) .form-email .form-email-title {
+  margin: 24px 40px 16px;
+}

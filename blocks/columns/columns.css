@@ -17,6 +17,95 @@
   display: block; /* @boilerplate */
 }
 
+/* narrow-copy variant — single authored column constrained to a readable copy
+   measure, flush to the section's leading edge (matching the ~540px content
+   column on vyepti.com/what-to-expect). Full width on mobile; the cap only
+   bites once the section container grows past it (768px+). The source centers
+   this copy on mobile and switches to left-aligned at 768px+; lists stay
+   left-aligned at every width. */
+main .columns.narrow-copy > div > div {
+  max-width: var(--columns-narrow-copy-max-width);
+  text-align: center;
+}
+
+main .columns.narrow-copy ul,
+main .columns.narrow-copy ol {
+  text-align: left;
+}
+
+/* match the source's tight rhythm: paragraphs carry their spacing as a bottom
+   margin with no top margin, so consecutive lines sit on an even rhythm rather
+   than the looser default block spacing. Headings keep the global teal h2 color. */
+main .columns.narrow-copy h2,
+main .columns.narrow-copy h3,
+main .columns.narrow-copy h4 {
+  margin: 0 0 var(--columns-narrow-copy-heading-gap);
+}
+
+main .columns.narrow-copy p {
+  margin: 0 0 var(--columns-narrow-copy-para-gap);
+  line-height: var(--columns-narrow-copy-para-line-height);
+}
+
+main .columns.narrow-copy > div > div > :last-child {
+  margin-bottom: 0;
+}
+
+/* mobile: cap the emphasized lead-in line to a narrower centered measure so it
+   wraps sooner, matching the source. Targets the trailing bold-only paragraph
+   ("Depending on your insurance…"); reset to full width at tablet+. */
+main .columns.narrow-copy > div > div > p:last-child:has(> strong:only-child) {
+  max-width: var(--columns-narrow-copy-lead-max-width-mobile);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* locations variant — row of icon-above-label option cards (matching the
+   "Depending on your insurance, you may be able to choose from" group on
+   vyepti.com/what-to-expect). Each authored cell holds one icon + label.
+   Cards butt together with no gap (as the source); 2 per row on mobile/tablet,
+   all 4 in a row at 992px+. */
+main .columns.locations > div {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: var(--columns-locations-row-gap-mobile) 0;
+  max-width: var(--columns-locations-max-width);
+  margin-bottom: var(--columns-locations-margin-bottom);
+}
+
+main .columns.locations > div > div {
+  order: unset;
+  flex: 0 0 var(--columns-locations-cell-basis-mobile);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+main .columns.locations img {
+  display: block;
+  width: var(--columns-locations-icon-size-mobile);
+  height: var(--columns-locations-icon-size-mobile);
+  margin-inline: auto;
+  object-fit: contain;
+}
+
+/* the 3rd option card (hospital/outpatient) uses a more tightly cropped icon;
+   render it narrower so it reads the same optical size as the others, but keep
+   the full icon-slot height (object-fit centers the glyph) so its label aligns
+   on the same baseline as the neighboring cards. */
+main .columns.locations > div > div:nth-child(3) img {
+  width: var(--columns-locations-icon-size-dense-mobile);
+}
+
+main .columns.locations p {
+  margin: var(--columns-locations-label-gap) 0 0;
+  font-size: var(--columns-locations-label-font-size);
+  line-height: var(--columns-locations-label-line-height);
+  font-weight: var(--columns-locations-label-font-weight);
+}
+
 /* stats-callout variant — vyepti study/survey results callouts.
    Teal headings, large red italic "X fewer" numbers, centered copy. */
 main .columns.stats-callout > div > div {
@@ -92,6 +181,40 @@ main .columns.stats-callout:has(img) > div > div:not(.columns-img-col) > p:first
     gap: var(--columns-gap); /* @boilerplate */
   }
 
+  /* narrow-copy switches from mobile-centered to left-aligned at tablet+ */
+  main .columns.narrow-copy > div > div {
+    text-align: left;
+  }
+
+  /* lead-in line returns to full width at tablet+ */
+  main .columns.narrow-copy > div > div > p:last-child:has(> strong:only-child) {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* locations stays a 2-up wrapped grid through the tablet range (matches the
+     source, which only goes 4-up at 992px); keep it top-aligned, left-packed,
+     with full-size icons, and override the base row flatten below. */
+  main .columns.locations > div {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  main .columns.locations > div > div {
+    flex: 0 0 50%;
+  }
+
+  main .columns.locations img {
+    width: var(--columns-locations-icon-size);
+    height: var(--columns-locations-icon-size);
+  }
+
+  main .columns.locations > div > div:nth-child(3) img {
+    width: var(--columns-locations-icon-size-dense);
+    height: var(--columns-locations-icon-size);
+  }
+
   .columns > div > div { /* @boilerplate */
     flex: 1; /* @boilerplate */
     order: unset; /* @boilerplate */
@@ -134,5 +257,22 @@ main .columns.stats-callout:has(img) > div > div:not(.columns-img-col) > p:first
 
   main .columns.stats-callout:has(img) > div > div:not(.columns-img-col) {
     text-align: left;
+  }
+}
+
+/* locations: all four option cards in a single row at 992px+ (the source's
+   Bootstrap lg breakpoint); below this they stay 2-up. Cards size to their
+   own content and pack left with a fixed gap (as the source), so the first
+   icon sits flush with the copy column's leading edge rather than centered
+   inside a stretched cell. */
+@media (width >= 992px) {
+  main .columns.locations > div {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: var(--columns-locations-gap);
+  }
+
+  main .columns.locations > div > div {
+    flex: 0 0 auto;
   }
 }

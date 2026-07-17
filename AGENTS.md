@@ -19,7 +19,7 @@ When facing trade-offs, follow this order: *Intuitive* (author-friendly) > *Simp
 ## Stack
 
 - Node.js 24; npm only (not pnpm/yarn)
-- ESLint 8.57.1 with eslint-config-airbnb-base; Stylelint 17.2.0 with stylelint-config-standard
+- ESLint 10.5.0 with popular security plugins, as well as inline rules that follow the original 'eslint-config-airbnb-base' (adapted from ESLint 8); Stylelint 17.4.0 with stylelint-config-standard
 - AEM Edge Delivery: https://www.aem.live/
 
 ## Hard constraints
@@ -34,6 +34,18 @@ When facing trade-offs, follow this order: *Intuitive* (author-friendly) > *Simp
 - **Security:**
   - Client-side code is public; do not commit secrets (API keys, passwords)
   - Use `.hlxignore` (same format as `.gitignore`) to exclude files from being served
+- **Additional Adobe generic security:**
+  - Defense in depth: apply controls at every layer; never rely on a single security measure
+  - Least privilege: grant only the minimum access/permissions needed for a task
+  - Fail securely: default to a safe state on error; never leak stack traces or internals to users
+  - Secure by default: ship safe configurations; require explicit opt-in for anything less safe
+  - Never use raw/untrusted input directly in file access, command execution, database queries, or similar sensitive operations
+  - Never execute dynamically constructed code (`eval`, `new Function`, etc.)
+  - Validate all external input (users, APIs, third parties) before use
+  - Never log credentials, tokens, or other sensitive/personal data
+  - Do not disable or bypass security checks without documented, reviewed justification
+  - If Snyk is configured in a project, run Snyk Code/SCA scans on new or changed code and dependencies, and fix findings before merging
+  - Topic-specific guidance (auth, injection, SSRF, SQL, XXE, dependency mgmt, Node.js, etc.) lives in `.agents/skills/adobe-security/` — consult the relevant skill when working in that area
 - **Accessibility:**
   - Valid heading hierarchy; `alt` required on all images—empty (`alt=""`) for decorative, descriptive for content
   - Meet WCAG 2.1 AA
@@ -61,6 +73,7 @@ When facing trade-offs, follow this order: *Intuitive* (author-friendly) > *Simp
 ├── blocks/{blockname}/
 │   ├── {blockname}.js    # Block decoration
 │   └── {blockname}.css   # Block styles
+│   └── {blockname}-tokens.css   # Block style CSS token definitions
 ├── styles/
 │   ├── styles.css        # LCP-critical global styles
 │   ├── lazy-styles.css   # Below-fold styles
@@ -125,7 +138,7 @@ Key principles:
 
 ```css
 /* All selectors MUST be scoped to the block */
-main .my-block {
+.my-block {
   /* Mobile-first base styles */
   padding: 1rem;
   display: flex;
@@ -133,31 +146,33 @@ main .my-block {
   gap: 1rem;
 }
 
-main .my-block h2 {
+.my-block h2 {
   font-family: var(--heading-font-family);
   font-size: var(--heading-font-size-m);
 }
 
 /* Tablet+ */
 @media (width >= 600px) {
-  main .my-block {
+  .my-block {
     padding: 2rem;
+    background-color: var(--color-light);
   }
 }
 
 /* Desktop+ */
 @media (width >= 900px) {
-  main .my-block {
+  .my-block {
     flex-direction: row;
     padding: 4rem;
+    background-color: unset;
   }
 }
 ```
 
 CSS rules:
 - **All selectors scoped to block**: `.my-block .item`, never just `.item`
-- **Mobile-first**: Base styles for mobile, `min-width` media queries for larger
-- **Breakpoints**: 600px (tablet), 900px (desktop), 1200px (wide) — use only what's needed
+- **Mobile-first**: Base styles for mobile, `min-width >=`("greater than") media queries for larger. Never use `<=` ("less than"), instead prefer to override/unset earlier CSS rules.
+- **Breakpoints**: 600px (tablet), 900px (desktop), 1200px (wide) — use only what's needed. Consolidate all breakpoint-specific rules into 1 media-query per CSS file, do not create individual media-queries per CSS rule.
 - **CSS custom properties**: Use `var(--token)` for all colors, fonts, sizes
 - **No `-container` / `-wrapper`** class names — those conflict with section wrappers
 - **No Tailwind or frameworks** — vanilla CSS only

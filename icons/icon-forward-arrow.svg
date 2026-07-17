@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="8px" viewBox="0 0 20 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>dripIcons / button arrow</title>
+    <g id="dripIcons-/-button-arrow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <line x1="1.23234756e-14" y1="3.8522397" x2="18" y2="3.8522397" id="Line-Copy-3" stroke="#046183" stroke-width="2" stroke-linecap="square"></line>
+        <polyline id="Path" stroke="#046183" stroke-width="2" points="15.5386584 -1.21556577e-14 19.5386584 4 15.5386584 8"></polyline>
+    </g>
+</svg>

@@ -1,0 +1,66 @@
+/* accordion-cards — downloadable resources accordion */
+:root {
+  /* section header bar */
+  --accordion-cards-header-bg: linear-gradient(
+    90deg,
+    #e1f0f6 0%,
+    #e1f0f6 60%,
+    #aed6de 100%
+  );
+  --accordion-cards-header-color: #046183;
+  --accordion-cards-header-font-size: 20px;
+  --accordion-cards-header-font-weight: 800;
+  --accordion-cards-header-line-height: 24px;
+  --accordion-cards-header-padding: 0;
+  --accordion-cards-header-title-padding: 7px 0 6px 14px;
+
+  /* sections */
+  --accordion-cards-section-gap: 8px;
+  --accordion-cards-panel-margin-top: 32px;
+
+  /* chevron — up when expanded, down when collapsed */
+  --accordion-cards-chevron-icon: url("/icons/icon-chevron-up.svg");
+  --accordion-cards-chevron-width: 22px;
+  --accordion-cards-chevron-height: 12px;
+  --accordion-cards-chevron-transition: 0.5s;
+  --accordion-cards-chevron-margin-top-mobile: 12px;
+  --accordion-cards-chevron-margin-right-mobile: 14px;
+  --accordion-cards-chevron-margin-right-desktop: 16px;
+
+  /* card grid */
+  --accordion-cards-grid-gap: 0 24px;
+  --accordion-cards-card-spacing: 32px;
+
+  /* card image */
+  --accordion-cards-image-max-width: 164px;
+
+  /* card typography */
+  --accordion-cards-title-color: #046183;
+  --accordion-cards-title-font-size: 20px;
+  --accordion-cards-title-line-height: 22px;
+  --accordion-cards-body-color: #484848;
+  --accordion-cards-body-font-size: 16px;
+  --accordion-cards-body-line-height: 22px;
+
+  /* links — icons authored via :icon-*: in DA */
+  --accordion-cards-link-color: #046183;
+  --accordion-cards-link-hover-color: #7ebcc6;
+  --accordion-cards-link-font-size: 16px;
+  --accordion-cards-link-font-weight: 700;
+  --accordion-cards-link-line-height: 20px;
+
+  /* scroll header into view on toggle (matches vyepti.com downloadable-resources) */
+  --accordion-cards-scroll-offset: 40px;
+  --accordion-cards-scroll-duration: 500ms;
+}
+
+.accordion-cards .accordion-cards-item {
+  scroll-margin-top: var(--accordion-cards-scroll-offset);
+}
+
+@media (width >= 992px) {
+  :root {
+    --accordion-cards-title-font-size: 22px;
+    --accordion-cards-image-max-width: 140px;
+  }
+}

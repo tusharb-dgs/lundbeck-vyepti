@@ -1,5 +1,8 @@
+/* eslint-disable secure-coding/no-insecure-comparison
+-- this is browser-side EDS code, not Node server auth logic. Not secret material; public DOM/content metadata validation. */
 import {
   buildBlock,
+  createOptimizedPicture,
   decorateBlock,
   loadBlock,
   loadHeader,
@@ -16,6 +19,10 @@ import {
   toClassName,
   loadScript,
 } from './aem.js';
+import {
+  createArtDirectionPicture,
+  DEFAULT_BLOCK_SINGLE_PICTURE_BREAKPOINTS,
+} from './utils.js';
 /** Max sections/children to process (CWE-770). */
 const MAX_SECTIONS = 100;
 const MAX_SECTION_CHILDREN = 200;
@@ -182,6 +189,123 @@ function buildAutoBlocks(main) {
   }
 }
 
+/**
+ * Hosts considered "local" — links to these open in the same tab.
+ * Everything else (plus any PDF) opens in a new tab.
+ */
+const LOCAL_HOSTS = new Set(['localhost']);
+const LOCAL_HOST_SUFFIXES = ['.page', '.live'];
+
+/**
+ * @param {URL} url
+ * @returns {boolean} true when the URL points at a first-party/local host
+ */
+function isLocalUrl(url) {
+  const host = url.hostname.toLowerCase();
+  if (host === window.location.hostname.toLowerCase()) return true;
+  if (LOCAL_HOSTS.has(host)) return true;
+  return LOCAL_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
+}
+
+/**
+ * Opens external links (and any PDF) in a new tab. First-party links to local
+ * hosts keep their default same-tab behavior. In-page anchors and non-http(s)
+ * schemes (mailto:, tel:, etc.) are left untouched.
+ * @param {Element} element The container element
+ */
+export function decorateExternalLinks(element) {
+  element.querySelectorAll('a[href]').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+
+    let url;
+    try {
+      url = new URL(href, window.location.href);
+    } catch {
+      return;
+    }
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+    const isPdf = url.pathname.toLowerCase().endsWith('.pdf');
+    if (isLocalUrl(url) && !isPdf) return;
+
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+}
+
+/** Duration for the in-page anchor smooth scroll (matches xenazineusa.com). */
+const ANCHOR_SCROLL_DURATION_MS = 1000;
+
+const anchorEaseInOutQuad = (t) => (t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2);
+
+/**
+ * Smooth-scrolls the window to a target Y with an explicit duration (native
+ * smooth scroll speed is not configurable).
+ * @param {number} targetY
+ * @param {number} duration
+ */
+function animatedScrollTo(targetY, duration = ANCHOR_SCROLL_DURATION_MS) {
+  const start = window.scrollY;
+  const distance = targetY - start;
+  if (distance === 0) return;
+  const startTime = performance.now();
+
+  const step = (now) => {
+    const progress = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, start + distance * anchorEaseInOutQuad(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/**
+ * Resolves the in-page target for an anchor click, or null if the link is not
+ * a same-page hash link (external, cross-page, or bare "#").
+ * @param {HTMLAnchorElement} anchor
+ * @returns {HTMLElement|null}
+ */
+function inPageTarget(anchor) {
+  const href = anchor.getAttribute('href');
+  if (!href || href === '#' || !href.includes('#')) return null;
+
+  let url;
+  try {
+    url = new URL(href, window.location.href);
+  } catch {
+    return null;
+  }
+  // must resolve to the current page (same path) to be an in-page anchor
+  if (url.pathname !== window.location.pathname || !url.hash) return null;
+
+  const id = decodeURIComponent(url.hash.substring(1));
+  if (!id) return null;
+  return document.getElementById(id);
+}
+
+/**
+ * Delegated smooth-scroll for in-page anchor links (e.g. nav cards that jump to
+ * an on-page section). Matches the animated scroll on xenazineusa.com without
+ * changing the URL hash (the source site scrolls without updating the URL).
+ * Cross-page and external links are left untouched.
+ * @param {Document|Element} scope
+ */
+export function enableSmoothAnchorScroll(scope = document) {
+  scope.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const anchor = e.target.closest('a[href*="#"]');
+    if (!anchor) return;
+
+    const target = inPageTarget(anchor);
+    if (!target) return;
+
+    e.preventDefault();
+    const scrollMargin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const targetY = target.getBoundingClientRect().top + window.scrollY - scrollMargin;
+    animatedScrollTo(targetY);
+  });
+}
+
 function a11yLinks(main) {
   const links = main.querySelectorAll('a');
   links.forEach((link) => {
@@ -236,9 +360,6 @@ export function decorateButtons(main) {
 
 /* === SECTIONS === */
 
-/** Metadata keys consumed by {@link applySectionBackgroundDecorations} (not mirrored as data-*). */
-const SECTION_BACKGROUND_META_KEYS = new Set(['background', 'background-color', 'background-image']);
-
 /**
  * Rejects values that could break out of a single CSS declaration when set via inline style.
  * @param {string} value Trimmed color value
@@ -251,7 +372,7 @@ function isSafeBackgroundColorValue(value) {
 }
 
 /**
- * Allows only http(s) URLs for background images (same-origin relative paths resolve safely).
+ * Allows https URLs for background images, plus http for localhost during local development.
  * Works with a dynamic media URL too.
  * @param {string} url
  * @returns {boolean}
@@ -260,7 +381,7 @@ function isAllowedBackgroundImageUrl(url) {
   if (!url || typeof url !== 'string') return false;
   try {
     const u = new URL(url.trim(), window.location.href);
-    return u.protocol === 'http:' || u.protocol === 'https:';
+    return u.protocol === 'https:' || (u.protocol === 'http:' && u.hostname === 'localhost');
   } catch {
     return false;
   }
@@ -279,35 +400,42 @@ function metaStringValue(value) {
 
 /**
  * Sets inline background-color and optionally prepends a decorative .bg-image layer.
- * Reads from the section-metadata config (local/plain delivery) or, when absent, from the
- * `data-background-*` attributes that DA delivery sets directly on the section element.
- * Keys match section model fields and {@link readBlockConfig}: `background`, `background-color`, `background-image`.
+ * Keys match section model fields and {@link readBlockConfig}: `background-color`,
+ * `background-image` … `background-image-5` (art-direction renditions).
  * @param {HTMLElement} section
- * @param {Record<string, unknown>} [meta]
+ * @param {Record<string, unknown>} meta
  */
 function applySectionBackgroundDecorations(section, meta = {}) {
-  const color = (metaStringValue(meta['background-color'])
-    || metaStringValue(meta.background)
-    || section.dataset.backgroundColor
-    || section.dataset.background
-    || '').trim();
+  const color = metaStringValue(meta['background-color']).trim() || metaStringValue(meta.background).trim();
   if (color && isSafeBackgroundColorValue(color)) {
-    section.style.setProperty('background-color', color);
+    section.style.setProperty('background', color);
   }
 
-  const imageUrl = (metaStringValue(meta['background-image'])
-    || section.dataset.backgroundImage || '').trim();
-  if (!imageUrl || !isAllowedBackgroundImageUrl(imageUrl)) return;
+  // background-image may be a comma-separated list when multiple images share one doc cell;
+  // background-image-2…5 are individual UE reference fields.
+  const bgImageStr = String(meta['background-image'] || '');
+  const rawUrls = [
+    ...bgImageStr.split(',').map((s) => s.trim()),
+    metaStringValue(meta['background-image-2']).trim(),
+    metaStringValue(meta['background-image-3']).trim(),
+    metaStringValue(meta['background-image-4']).trim(),
+    metaStringValue(meta['background-image-5']).trim(),
+  ].slice(0, 5).filter((url) => url && isAllowedBackgroundImageUrl(url));
+
+  if (!rawUrls.length) return;
+
+  // localhost never has a valid TLS cert; downgrade https → http so the request succeeds
+  const sources = rawUrls.map((url) => {
+    const parsed = new URL(url, window.location.href);
+    if (parsed.hostname === 'localhost') parsed.protocol = 'http:';
+    return { src: parsed.href, alt: '' };
+  });
 
   const bg = document.createElement('div');
   bg.className = 'bg-image';
-  const picture = document.createElement('picture');
-  const img = document.createElement('img');
-  img.src = imageUrl;
-  img.alt = 'decorative background';
-  img.loading = 'lazy';
-  img.decoding = 'async'; // prevent blocking the main thread
-  picture.append(img);
+  const picture = sources.length === 1
+    ? createOptimizedPicture(sources[0].src, '', false, DEFAULT_BLOCK_SINGLE_PICTURE_BREAKPOINTS)
+    : createArtDirectionPicture(sources, false);
   bg.append(picture);
   section.prepend(bg);
 }
@@ -326,7 +454,7 @@ export function decorateSections(main) {
     let defaultContent = false;
     // Snapshot children so moving nodes during iteration doesn't invalidate indices
     const sectionChildren = [...section.children].slice(0, MAX_SECTION_CHILDREN);
-    for (const e of sectionChildren) {
+    sectionChildren.forEach((e) => {
       // from the da boilerplate
       if (e.classList.contains('richtext')) {
         e.removeAttribute('class');
@@ -343,7 +471,7 @@ export function decorateSections(main) {
         if (defaultContent) wrapper.classList.add('default-content-wrapper');
       }
       wrappers.at(-1)?.append(e);
-    }
+    });
 
     // Add wrapped content back
     wrappers.forEach((wrapper) => section.append(wrapper));
@@ -351,8 +479,7 @@ export function decorateSections(main) {
     section.setAttribute('data-section-status', 'initialized');
     section.style.display = 'none';
 
-    // Process section metadata. Local/plain delivery ships a div.section-metadata table;
-    // DA delivery instead converts it into data-* attributes on the section itself.
+    // Process section metadata
     const sectionMeta = section.querySelector('div.section-metadata');
     if (sectionMeta) {
       const meta = readBlockConfig(sectionMeta);
@@ -364,15 +491,23 @@ export function decorateSections(main) {
             .filter((style) => style)
             .map((style) => toClassName(style.trim()));
           styles.forEach((style) => section.classList.add(style));
-        } else if (isSafeObjectKey(key) && !SECTION_BACKGROUND_META_KEYS.has(key)) {
+        } else if (isSafeObjectKey(key)) {
           section.setAttribute(`data-${key}`, String(value ?? ''));
         }
       });
-      applySectionBackgroundDecorations(section, meta);
       sectionMeta.parentNode.remove();
-    } else {
-      applySectionBackgroundDecorations(section);
     }
+
+    // Apply background decorations from data-* attributes (set via section-metadata or by the platform)
+    applySectionBackgroundDecorations(section, {
+      background: section.getAttribute('data-background') || '',
+      'background-color': section.getAttribute('data-background-color') || '',
+      'background-image': section.getAttribute('data-background-image') || '',
+      'background-image-2': section.getAttribute('data-background-image-2') || '',
+      'background-image-3': section.getAttribute('data-background-image-3') || '',
+      'background-image-4': section.getAttribute('data-background-image-4') || '',
+      'background-image-5': section.getAttribute('data-background-image-5') || '',
+    });
   }
 }
 
@@ -386,13 +521,14 @@ export function decorateSections(main) {
  */
 export function groupFlexSections(main) {
   const sections = [...main.querySelectorAll(':scope > .section')].slice(0, MAX_SECTIONS);
+  const sectionLimit = Math.min(sections.length, MAX_SECTIONS);
   let i = 0;
-  while (i < sections.length) {
+  while (i < sectionLimit) {
     if (!sections[i].classList.contains('flex')) {
       i += 1;
     } else {
       let j = i + 1;
-      while (j < sections.length && sections[j].classList.contains('flex')) {
+      while (j < sectionLimit && sections[j].classList.contains('flex')) {
         j += 1;
       }
       const run = sections.slice(i, j);
@@ -551,38 +687,67 @@ export function decorateIconsAndBullets(element, prefix = '') {
   iconsToBullets(element);
 }
 
-/* === SPAN TAGS ===
+/* === BRACKET TAGS ===
  * Bracket syntax: [[class1,class2]text] → <span class="class1 class2">text</span>
+ * Nested section syntax: [#section-id] → cloned content from section-metadata ID.
  * Only alphanumeric, hyphen, and underscore are allowed in class names.
  * Malformed patterns (empty class list, invalid chars) are left unchanged.
  * Alignment classes (center, left, right) are hoisted to the containing element
  * instead of applied to a span.
  */
 
-function parseClasses(raw) {
+function parseClasses(raw, classNamePattern = /^[a-zA-Z0-9_-]+$/) {
   const names = raw.split(',').map((c) => c.trim());
-  if (names.some((c) => !c || !/^[a-zA-Z0-9_-]+$/.test(c))) return [];
+  if (names.some((c) => !c || !classNamePattern.test(c))) return [];
   return names;
 }
 
 function parseSplitClasses(raw) {
-  const names = raw.split(',').map((c) => c.trim());
-  if (names.some((c) => !c || !/^[a-z0-9-]+$/.test(c))) return [];
-  return names;
+  return parseClasses(raw, /^[a-z0-9-]+$/);
 }
 
 const SPLIT_INLINE_TAGS = new Set(['STRONG', 'EM', 'A', 'BR']);
 
 const ALIGNMENT_CLASSES = new Set(['center', 'left', 'right']);
 
-// eslint-disable-next-line sonarjs/slow-regex
+const SPAN_TAG_SELECTOR = 'h1, h2, h3, h4, h5, h6, p, li';
+
 const SPLIT_OPEN_RE = /\[\[([a-z0-9,-]+)\]\s*$/;
 
-// eslint-disable-next-line sonarjs/slow-regex
-const BRACKET_RE = /\[\[[^\]]+\]([^\]]*)\]/g;
+const SPAN_TAG_RE = /\[\[(?=([^\]]+))\1\](?=([^\]]*))\2\]/g;
 
-// eslint-disable-next-line sonarjs/slow-regex
 const TOOLTIP_OPEN_RE = /\[\[tooltip\]\s*$/;
+
+const NESTED_SECTION_RE = /\[#([^\]]+)\]/g;
+const NESTED_SECTION_ONLY_RE = /^\[#([^\]]+)\]$/;
+
+function normalizeNestedSectionId(value) {
+  if (typeof value !== 'string') return '';
+  return value
+    .trim()
+    .replace(/^#/, '')
+    .replace(/^id\s*=\s*/i, '')
+    .trim();
+}
+
+function collectTextNodes(element, marker) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  let node = walker.nextNode();
+  while (node) {
+    if (!marker || node.nodeValue.includes(marker)) nodes.push(node);
+    node = walker.nextNode();
+  }
+  return nodes;
+}
+
+function splitAlignmentClasses(classes) {
+  return classes.reduce((groups, c) => {
+    if (ALIGNMENT_CLASSES.has(c)) groups.alignClasses.push(c);
+    else groups.regularClasses.push(c);
+    return groups;
+  }, { alignClasses: [], regularClasses: [] });
+}
 
 function applySplitBoundaryPass(el) {
   const children = [...el.childNodes];
@@ -593,7 +758,6 @@ function applySplitBoundaryPass(el) {
     const next = children.at(i + 2);
 
     const isPrevText = prev.nodeType === Node.TEXT_NODE;
-    // eslint-disable-next-line secure-coding/detect-object-injection
     const isMidInline = mid.nodeType === Node.ELEMENT_NODE && SPLIT_INLINE_TAGS.has(mid.nodeName);
     const isNextText = next.nodeType === Node.TEXT_NODE;
 
@@ -620,8 +784,7 @@ function applySplitBoundaryPass(el) {
         const classes = openMatch ? parseSplitClasses(openMatch[1]) : [];
         const closeMatch = openMatch && classes.length ? next.nodeValue.match(/^\s*\]/) : null;
         if (closeMatch) {
-          const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
-          const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+          const { alignClasses, regularClasses } = splitAlignmentClasses(classes);
           if (alignClasses.length) el.classList.add(...alignClasses);
           prev.nodeValue = prev.nodeValue.slice(0, -openMatch[0].length);
           next.nodeValue = next.nodeValue.slice(closeMatch[0].length);
@@ -635,17 +798,14 @@ function applySplitBoundaryPass(el) {
       }
     } else if (!isPrevText && mid.nodeType === Node.TEXT_NODE && !isNextText && next.children.length === 0) {
       // Pattern B: <inline>prefix[[</inline> "classes" <inline>]content]</inline>
-      // eslint-disable-next-line secure-coding/detect-object-injection
       const isPrevInline = prev.nodeType === Node.ELEMENT_NODE && SPLIT_INLINE_TAGS.has(prev.nodeName);
-      // eslint-disable-next-line secure-coding/detect-object-injection
       const isNextInline = next.nodeType === Node.ELEMENT_NODE && SPLIT_INLINE_TAGS.has(next.nodeName);
       const openerText = prev.textContent;
       const closerText = next.textContent;
       const classes = parseSplitClasses(mid.nodeValue);
       if (isPrevInline && isNextInline && openerText.endsWith('[[') && classes.length
         && closerText.startsWith(']') && closerText.endsWith(']')) {
-        const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
-        const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+        const { alignClasses, regularClasses } = splitAlignmentClasses(classes);
         if (alignClasses.length) el.classList.add(...alignClasses);
         next.textContent = closerText.slice(1, -1);
         if (regularClasses.length) {
@@ -664,8 +824,8 @@ function applySplitBoundaryPass(el) {
 }
 
 export function applySpanTags(text) {
-  // eslint-disable-next-line sonarjs/slow-regex
-  return text.replace(/\[\[([^\]]+)\]([^\]]*)\]/g, (match, raw, content) => {
+  SPAN_TAG_RE.lastIndex = 0;
+  return text.replace(SPAN_TAG_RE, (match, raw, content) => {
     const classes = parseClasses(raw);
     if (!classes.length) return match;
     // eslint-disable-next-line secure-coding/no-improper-sanitization
@@ -685,11 +845,10 @@ function replaceTextNode(textNode, containingEl) {
   let lastIndex = 0;
   let match;
 
-  // eslint-disable-next-line sonarjs/slow-regex
-  const re = /\[\[([^\]]+)\]([^\]]*)\]/g;
+  SPAN_TAG_RE.lastIndex = 0;
 
   // eslint-disable-next-line no-cond-assign
-  while ((match = re.exec(text)) !== null) {
+  while ((match = SPAN_TAG_RE.exec(text)) !== null) {
     const [full, raw, content] = match;
     const classes = parseClasses(raw);
 
@@ -700,8 +859,7 @@ function replaceTextNode(textNode, containingEl) {
     if (!classes.length) {
       frag.appendChild(document.createTextNode(full));
     } else {
-      const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
-      const regularClasses = classes.filter((c) => !ALIGNMENT_CLASSES.has(c));
+      const { alignClasses, regularClasses } = splitAlignmentClasses(classes);
       if (alignClasses.length && containingEl) containingEl.classList.add(...alignClasses);
       if (regularClasses.length) {
         const span = document.createElement('span');
@@ -728,12 +886,12 @@ function replaceTextNode(textNode, containingEl) {
 function cleanAttributes(element) {
   element.querySelectorAll('a').forEach((a) => {
     if (a.hasAttribute('title')) {
-      const cleaned = a.getAttribute('title').replace(BRACKET_RE, '$1');
+      const cleaned = a.getAttribute('title').replace(SPAN_TAG_RE, '$2');
       if (cleaned !== a.getAttribute('title')) a.setAttribute('title', cleaned);
     }
     if (a.hasAttribute('aria-label')) {
       const cleaned = a.getAttribute('aria-label')
-        .replace(BRACKET_RE, (_, content) => content)
+        .replace(SPAN_TAG_RE, (_, raw, content) => content)
         .replace(/\s+/g, ' ')
         .trim();
       if (cleaned !== a.getAttribute('aria-label')) a.setAttribute('aria-label', cleaned);
@@ -753,10 +911,7 @@ function cleanAttributes(element) {
 function hoistAlignmentAcrossInlines(el) {
   // Handles [[alignment-class]content] where content spans inline elements,
   // causing the opening [[class] and closing ] to land in different text nodes.
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  const textNodes = [];
-  let n = walker.nextNode();
-  while (n) { textNodes.push(n); n = walker.nextNode(); }
+  const textNodes = collectTextNodes(el);
 
   for (let i = 0; i < textNodes.length - 1; i += 1) {
     const node = textNodes[i];
@@ -768,12 +923,11 @@ function hoistAlignmentAcrossInlines(el) {
     // If the bracket expression is fully contained in this node, replaceTextNode handles it
     if (/^\[\[[^\]]+\][^\]]*\]/.test(tail)) continue; // eslint-disable-line no-continue
 
-    // eslint-disable-next-line sonarjs/slow-regex
     const classMatch = tail.match(/^\[\[([a-zA-Z0-9_,-]+)\]/);
     if (!classMatch) continue; // eslint-disable-line no-continue
 
     const classes = parseClasses(classMatch[1]);
-    const alignClasses = classes.filter((c) => ALIGNMENT_CLASSES.has(c));
+    const { alignClasses } = splitAlignmentClasses(classes);
     // Only handle pure-alignment spanning patterns; mixed (alignment + span classes) needs Range API
     if (!alignClasses.length || classes.length !== alignClasses.length) continue; // eslint-disable-line no-continue
 
@@ -792,16 +946,10 @@ function hoistAlignmentAcrossInlines(el) {
 }
 
 export function decorateSpanTags(element) {
-  element.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li').forEach((el) => {
+  element.querySelectorAll(SPAN_TAG_SELECTOR).forEach((el) => {
     if (el.textContent.includes('[[')) hoistAlignmentAcrossInlines(el);
 
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let node = walker.nextNode();
-    while (node) {
-      if (node.nodeValue.includes('[[')) nodes.push(node);
-      node = walker.nextNode();
-    }
+    const nodes = collectTextNodes(el, '[[');
     nodes.forEach((n) => replaceTextNode(n, el));
     applySplitBoundaryPass(el);
   });
@@ -809,13 +957,155 @@ export function decorateSpanTags(element) {
   cleanAttributes(element);
 }
 
-/* === END SPAN TAGS === */
+function collectNestedSectionIds(nodes) {
+  const sectionIds = new Set();
+  nodes.forEach((node) => {
+    let match;
+    NESTED_SECTION_RE.lastIndex = 0;
+    // eslint-disable-next-line no-cond-assign
+    while ((match = NESTED_SECTION_RE.exec(node.nodeValue)) !== null) {
+      const sectionId = normalizeNestedSectionId(match[1]);
+      if (sectionId) sectionIds.add(sectionId);
+    }
+  });
+  return sectionIds;
+}
+
+function getNestedSectionIds(section) {
+  const ids = [
+    normalizeNestedSectionId(section.dataset.id),
+    normalizeNestedSectionId(section.id),
+  ].filter(Boolean);
+
+  section.classList.forEach((className) => {
+    if (className.startsWith('id-')) {
+      const sectionId = normalizeNestedSectionId(className.slice(3));
+      if (sectionId) ids.push(sectionId);
+    }
+  });
+
+  return [...new Set(ids)];
+}
+
+function buildNestedSectionMap(main, sectionIds) {
+  const sectionMap = new Map();
+
+  main.querySelectorAll('.section').forEach((section) => {
+    getNestedSectionIds(section).forEach((sectionId) => {
+      if (!sectionIds.has(sectionId) || sectionMap.has(sectionId)) return;
+
+      const content = document.createElement('div');
+      [...section.children].forEach((child) => {
+        content.appendChild(child.cloneNode(true));
+      });
+      sectionMap.set(sectionId, { content, element: section });
+    });
+  });
+
+  return sectionMap;
+}
+
+function appendNestedSectionContent(fragment, sectionData) {
+  const content = sectionData.content.cloneNode(true);
+  const elements = [...content.children];
+
+  elements.forEach((el) => {
+    const blocks = el.classList.contains('block') ? [el] : [];
+    blocks.push(...el.querySelectorAll('.block'));
+    blocks.forEach((block) => block.classList.add('nested-block'));
+    fragment.appendChild(el);
+  });
+}
+
+function replaceNestedSectionNode(textNode, sectionMap, usedSectionIds) {
+  const text = textNode.nodeValue;
+  const parent = textNode.parentElement;
+  const onlyMatch = text.trim().match(NESTED_SECTION_ONLY_RE);
+
+  if (parent && onlyMatch && parent.textContent.trim() === text.trim()) {
+    const sectionId = normalizeNestedSectionId(onlyMatch[1]);
+    const sectionData = sectionMap.get(sectionId);
+    if (!sectionData) return;
+
+    const fragment = document.createDocumentFragment();
+    appendNestedSectionContent(fragment, sectionData);
+    parent.before(fragment);
+    parent.remove();
+    usedSectionIds.add(sectionId);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  let changed = false;
+  let lastIndex = 0;
+  let match;
+
+  NESTED_SECTION_RE.lastIndex = 0;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = NESTED_SECTION_RE.exec(text)) !== null) {
+    const [fullMatch, rawSectionId] = match;
+    const sectionId = normalizeNestedSectionId(rawSectionId);
+    const sectionData = sectionMap.get(sectionId);
+
+    if (match.index > lastIndex) {
+      fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+    }
+
+    if (sectionData) {
+      appendNestedSectionContent(fragment, sectionData);
+      usedSectionIds.add(sectionId);
+      changed = true;
+    } else {
+      fragment.appendChild(document.createTextNode(fullMatch));
+    }
+
+    lastIndex = match.index + fullMatch.length;
+  }
+
+  if (!changed) return;
+
+  if (lastIndex < text.length) {
+    fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+  }
+
+  textNode.replaceWith(fragment);
+}
+
+/**
+ * Decorates nested sections by replacing [#section-id] placeholders
+ * with the content of sections that have matching IDs in their section-metadata.
+ * Only sections that are actually used as placeholders are removed from the page.
+ * Runs after decorateSections and decorateBlocks so content is already decorated.
+ * @param {Element} main The container element
+ */
+function decorateNestedSections(main) {
+  const nodesToProcess = collectTextNodes(main, '[#');
+  if (!nodesToProcess.length) return;
+
+  const sectionIds = collectNestedSectionIds(nodesToProcess);
+  if (!sectionIds.size) return;
+
+  const sectionMap = buildNestedSectionMap(main, sectionIds);
+  if (!sectionMap.size) return;
+
+  const usedSectionIds = new Set();
+  nodesToProcess.forEach((node) => {
+    if (node.isConnected) {
+      replaceNestedSectionNode(node, sectionMap, usedSectionIds);
+    }
+  });
+
+  usedSectionIds.forEach((sectionId) => {
+    sectionMap.get(sectionId)?.element.remove();
+  });
+}
+
+/* === END BRACKET TAGS === */
 
 /**
  * Decorates the main element.
  * @param {Element} main The main element
  */
-// eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateIconsAndBullets(main);
@@ -823,8 +1113,10 @@ export function decorateMain(main) {
   decorateSections(main);
   groupFlexSections(main);
   decorateBlocks(main);
+  decorateNestedSections(main);
   decorateButtons(main);
   a11yLinks(main);
+  decorateExternalLinks(main);
   decorateSpanTags(main);
 }
 
@@ -951,6 +1243,7 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  enableSmoothAnchorScroll(doc);
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
@@ -1001,7 +1294,6 @@ async function loadLazy(doc) {
  * without impacting the user experience.
  */
 function loadDelayed() {
-  // eslint-disable-next-line import/no-cycle
   const importDelayed = () => import('./delayed.js');
 
   if ('requestIdleCallback' in window) {
@@ -1033,7 +1325,6 @@ export async function loadPage() {
 
 // DA UE Editor support before page load
 if (window.location.hostname.includes('ue.da.live')) {
-  // eslint-disable-next-line import/no-unresolved
   await import(`${window.hlx.codeBasePath}/ue/scripts/ue.js`).then(({ default: ue }) => ue());
 }
 loadPage();

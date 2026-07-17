@@ -1,0 +1,82 @@
+{
+  "definitions": [
+    {
+      "title": "Accordion Cards",
+      "id": "accordion-cards",
+      "model": "accordion-cards",
+      "filter": "accordion-cards",
+      "plugins": {
+        "da": {
+          "name": "accordion-cards",
+          "rows": 0,
+          "columns": 0
+        }
+      }
+    },
+    {
+      "title": "Accordion Cards Item",
+      "id": "accordion-cards-item",
+      "model": "accordion-cards-item",
+      "plugins": {
+        "da": {
+          "rows": 1,
+          "columns": 4,
+          "fields": [
+            { "name": "summary", "selector": "div:nth-child(1)" },
+            { "name": "intro", "selector": "div:nth-child(2)" },
+            { "name": "leftCards", "selector": "div:nth-child(3)" },
+            { "name": "rightCards", "selector": "div:nth-child(4)" }
+          ]
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "title": "Accordion Cards Item",
+      "id": "accordion-cards-item",
+      "model": "accordion-cards-item",
+      "fields": [
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "summary",
+          "value": "summary",
+          "label": "Accordion Heading",
+          "required": true
+        },
+        {
+          "component": "richtext",
+          "name": "intro",
+          "value": "intro",
+          "label": "Intro Text (optional)",
+          "valueType": "string"
+        },
+        {
+          "component": "richtext",
+          "name": "leftCards",
+          "value": "leftCards",
+          "label": "Left Column Cards",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "richtext",
+          "name": "rightCards",
+          "value": "rightCards",
+          "label": "Right Column Cards",
+          "valueType": "string",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "accordion-cards",
+      "components": [
+        "accordion-cards-item"
+      ]
+    }
+  ]
+}
