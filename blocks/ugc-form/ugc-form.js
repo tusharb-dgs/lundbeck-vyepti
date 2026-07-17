@@ -63,6 +63,9 @@ function createUploadRow(isFirst = false) {
       placeholder.style.display = 'block';
       return;
     }
+    const fileError = document.querySelector('.ugc-file-error');
+    
+    if (file) {  fileError?.remove();}
 
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
@@ -170,7 +173,7 @@ function showError(field, message) {
 }
 
 function validateField(field) {
-  const value = field.value.trim();
+  const value = field?.value?.trim?.() || '';
 
   switch (field.name) {
     case 'firstName':
@@ -233,10 +236,82 @@ function validateField(field) {
       break;
     }
 
+    case 'upload': {
+      const wrapper = document.querySelector(
+        '.ugc-file.field-wrapper.file-wrapper',
+      );
+
+      const hasFile = [...document.querySelectorAll('.ugc-file-input')]
+        .some((input) => input.files?.length);
+
+      const error = wrapper?.nextElementSibling?.classList.contains(
+        'ugc-file-error',
+      )
+        ? wrapper.nextElementSibling
+        : null;
+
+      if (!hasFile) {
+        if (!error) {
+          const fileError = document.createElement('div');
+
+          fileError.className = 'ugc-error ugc-file-error';
+
+          fileError.textContent =
+            'Error: Upload your video or image is required';
+
+          wrapper?.insertAdjacentElement(
+            'afterend',
+            fileError,
+          );
+        }
+      } else {
+        error?.remove();
+      }
+
+      break;
+    }
+
+    case 'terms': {
+      const checkbox = document.querySelector(
+        'input[name="terms"]',
+      );
+
+      const wrapper = checkbox?.closest('.field-wrapper');
+
+      const error = wrapper?.nextElementSibling?.classList.contains(
+        'ugc-checkbox-error',
+      )
+        ? wrapper.nextElementSibling
+        : null;
+
+      if (!checkbox?.checked) {
+        if (!error) {
+          const checkboxError = document.createElement('div');
+
+          checkboxError.className =
+            'ugc-error ugc-checkbox-error';
+
+          checkboxError.textContent =
+            'Error: Checkbox is required';
+
+          wrapper?.insertAdjacentElement(
+            'afterend',
+            checkboxError,
+          );
+        }
+      } else {
+        error?.remove();
+      }
+
+      break;
+    }
+
     default:
       break;
   }
 }
+
+
 
 function initValidationListeners() {
   if (document.body.dataset.validationBound === 'true') {
@@ -272,6 +347,45 @@ function initValidationListeners() {
         validateField(field);
     }
   });
+
+  document.addEventListener(
+    'submit',
+    (event) => {
+      validateField(
+        document.querySelector('input[name="firstName"]'),
+      );
+
+      validateField(
+        document.querySelector('input[name="lastName"]'),
+      );
+
+      validateField(
+        document.querySelector('input[name="email"]'),
+      );
+
+      validateField(
+        document.querySelector('textarea[name="story"]'),
+      );
+
+      validateField({ name: 'upload' });
+      validateField({ name: 'terms' });
+
+      if (
+        document.querySelector('.field-error') ||
+        document.querySelector('.ugc-file-error') ||
+        document.querySelector('.ugc-checkbox-error')
+      ) {
+        event.preventDefault();
+      }
+    },
+    true,
+  );
+
+  document.addEventListener('change', (event) => {
+    if (event.target.name === 'terms') {
+      validateField({ name: 'terms' });
+    }
+  });
 }
 
 function fixMarkdownLinks() {
@@ -305,6 +419,9 @@ function enhanceLabels() {
 }
 
 function init() {
+  document.querySelectorAll('.form form').forEach((form) => {
+    form.setAttribute('novalidate', '');
+  });
   document.querySelectorAll('.ugc-file.field-wrapper.file-wrapper').forEach(initializeUpload);
   initValidationListeners();
 }
