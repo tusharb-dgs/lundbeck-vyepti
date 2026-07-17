@@ -1,14 +1,12 @@
 export default async function decorate(block) {
-  // 1. Your block's custom initialization logic goes here
   block.classList.add('my-custom-wrapper');
   try {
-    // 2. Dynamically import the target block's JS module
     const targetBlockModule = await import('../form/form.js');
   
-    // 3. Extract the default decoration function
+    // Extract the default decoration function
     const decorateTargetBlock = targetBlockModule.default;
     if (typeof decorateTargetBlock === 'function') {
-      // 4. Pass your block element (or a specific child element) to the target block's decorator
+      // Pass your block element (or a specific child element) to the target block's decorator
       await decorateTargetBlock(block);
     }
   } catch (error) {
@@ -92,8 +90,6 @@ function createUploadRow(isFirst = false) {
 
       if (document.querySelectorAll('.ugc-upload-row').length < 3) {
         addButton.disabled = false;
-        // addButton.style.display = document.querySelectorAll('.ugc-upload-row').length < 3 ? '' : 'none';
-
       }
     });
   }
@@ -148,15 +144,12 @@ function initializeUpload(wrapper) {
 
 function removeError(field) {
   field.classList.remove('field-error');
-
   const wrapper = field.closest('.field-wrapper');
-
   if (!wrapper) {
     return;
   }
 
   const error = wrapper.querySelector('.ugc-error');
-
   if (error) {
     error.remove();
   }
@@ -164,11 +157,8 @@ function removeError(field) {
 
 function showError(field, message) {
   removeError(field);
-
   field.classList.add('field-error');
-
   const wrapper = field.closest('.field-wrapper');
-
   if (!wrapper) {
     return;
   }
@@ -176,7 +166,6 @@ function showError(field, message) {
   const error = document.createElement('div');
   error.className = 'ugc-error';
   error.textContent = message;
-
   wrapper.appendChild(error);
 }
 
@@ -302,15 +291,12 @@ function enhanceLabels() {
       }
 
       const text = label.textContent;
-
       if (!text.includes('|')) {
         return;
       }
       
       label.dataset.labelEnhanced = 'true';
-
       const [labelText, helperText] = text.split('|');
-
       label.innerHTML = `
         <span class="ugc-label-text">${labelText}</span>
         <span class="ugc-label-helper"> &nbsp${helperText}</span>
@@ -319,10 +305,7 @@ function enhanceLabels() {
 }
 
 function init() {
-  document
-    .querySelectorAll('.ugc-file.field-wrapper.file-wrapper')
-    .forEach(initializeUpload);
-
+  document.querySelectorAll('.ugc-file.field-wrapper.file-wrapper').forEach(initializeUpload);
   initValidationListeners();
 }
 

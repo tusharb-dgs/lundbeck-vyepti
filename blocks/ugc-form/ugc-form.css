@@ -1,6 +1,5 @@
 @import url('./ugc-form-tokens.css');
 @import url('/blocks/form/form.css');
-/* @import url('/blocks/form/form-tokens.css'); */
 
 /* =====================================
    FORM CONTAINER
@@ -14,14 +13,6 @@
 /* =====================================
    HEADINGS
 ===================================== */
-
-/* .ugc-main-heading h2 {
-  color: var(--brand-primary);
-  font-size: var(--heading-font-size-xxl);
-  line-height: var(--heading-line-height);
-  font-weight: var(--heading-font-weight);
-  margin: 0 0 24px;
-} */
 
 .ugc-section-heading h2,
 .ugc-section-heading h3,
@@ -85,7 +76,6 @@
 
 .ugc-label-text {
   color: var(--brand-primary);
-  /* font-weight: var(--font-weight-bold); */
 }
 
 .ugc-label-helper {
@@ -180,12 +170,6 @@
 
   border: 1px solid var(--dark-color);
 }
-/* 
-.form .ugc-input input:hover,
-.form .ugc-input select:hover,
-.form .ugc-textarea textarea:hover {
-  border: 1px solid var(--dark-color);
-} */
 
 /* spacing */
 
@@ -272,12 +256,6 @@
   font-weight: var(--button-font-weight);
   cursor: pointer;
 }
-
-/* .form .submit-wrapper button:hover {
-  background: var(--button-primary-hover-background);
-  color: var(--button-primary-hover-color);
-  border-color: var(--button-primary-hover-border-color);
-} */
 
 /* =====================================
    MULTIPLE MEDIA UPLOAD
@@ -373,10 +351,6 @@ main img,
   line-height: 1;
   padding: 0;
 }
-
-/* .ugc-remove-upload:hover {
-  opacity: .7;
-} */
 
 .ugc-remove-upload {
   border: none;
@@ -477,9 +451,10 @@ main img,
 }
 
 
-.ugc-terms p {    padding-left: 45px;}
+.ugc-terms p {
+  padding-left: 45px;
+}
 
-/*Mobile CSS*/
 @media (max-width: 767px) {
   .ugc-submit{
    place-items: center;

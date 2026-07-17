@@ -1,25 +1,11 @@
 /* ugc-form design tokens */
 :root {
   /* Colors */
-  --brand-primary: #005A87;
-  --brand-primary-dark: #004466;
-  --ugc-color-error-text: #B42442;
-  --ugc-color-error-bg: #FFFBFB;
   --ugc-color-text-dark: #333333;
-  --ugc-color-text-muted: #555555;
-  --ugc-color-bg-light: #FFFFFF;
   --ugc-color-btn-gray: #EAEAEA;
-  --ugc-color-btn-gray-hover: #DFDFDF;
-  --ugc-color-border-light: #D1D1D1;
-  --ugc-color-accordion-bg: #F0F6F9;
-  --ugc-color-accordion-border: #D1E1EB;
 
   /* Typography */
-  --ugc-font-base: Arial, sans-serif;
   --ugc-font-size-title: 24px;
-  --body-font-size-s: 14px;
-  --ugc-font-size-input: 16px;
-  --ugc-font-size-legal: 12px;
   --ugc-heading-weight: 600;
 
   /* Layout Dimensions */
