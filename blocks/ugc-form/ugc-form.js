@@ -1,5 +1,13 @@
+let config = {};
 export default async function decorate(block) {
-  block.classList.add('my-custom-wrapper');
+
+  [...block.children].slice(-3).forEach((row) => {
+    const text = row.textContent.trim();
+    const [key, value] = text.split(':');
+    config[key.trim()] = value.trim();
+    row.remove(); // hide/remove config row
+  });
+                                  
   try {
     const targetBlockModule = await import('../form/form.js');
   
@@ -14,6 +22,9 @@ export default async function decorate(block) {
   }
 }
 
+/* ==========================================
+  Multiple Media Upload Handling
+========================================== */
 
 function createUploadRow(isFirst = false) {
   const row = document.createElement('div');
@@ -368,8 +379,11 @@ function initValidationListeners() {
         return;
       }
 
-      /* Collect form data */
+/* Collect form data */
       const formData = {
+        id:config.id,
+        a:config.a,
+        g:config.g,
         firstName:document.querySelector('input[name="firstName"]')?.value || '',
         lastName:document.querySelector('input[name="lastName"]')?.value || '',
         email:document.querySelector('input[name="email"]')?.value || '',
@@ -396,6 +410,10 @@ function initValidationListeners() {
   });
 }
 
+/* ==========================================
+   Adding Markdown Links in Plain Text
+========================================== */
+
 function fixMarkdownLinks() {
   document.querySelectorAll('.ugc-terms.field-wrapper p').forEach(el => {
     const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
@@ -404,6 +422,10 @@ function fixMarkdownLinks() {
     }
   });
 }
+
+/* ==========================================
+   Adding Helper Text to Labels
+========================================== */
 
 function enhanceLabels() {
   document.querySelectorAll('.field-wrapper label')
