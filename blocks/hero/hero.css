@@ -10,7 +10,9 @@ main > .section.hero-container {
   margin: 0;
 }
 
-.hero-container .hero-wrapper {
+/* higher specificity than the global `main > .section > div:not(.bg-image)`
+   gutter rule so the hero stays full-bleed with no side white bars */
+main > .section.hero-container > .hero-wrapper {
   max-width: unset;
   padding: 0;
 }

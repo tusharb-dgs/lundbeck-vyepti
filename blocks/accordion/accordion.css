@@ -93,14 +93,22 @@
 }
 
 .accordion li.active .accordion-item-body { /* @libs */
-  display: flex; /* @libs */
-  flex-direction: column; /* @libs */
-  gap: var(--accordion-body-gap); /* @libs */
+  display: block; /* @libs */
   margin-top: var(--accordion-body-gap); /* @libs */
   color: var(--accordion-body-color); /* @libs */
   font-size: var(--accordion-body-font-size); /* @libs */
   line-height: var(--accordion-body-line-height); /* @libs */
   cursor: auto; /* @libs */
+}
+
+/* block flow: spacing comes from per-element margins (matching the source),
+   not a flex gap — a gap would stack with the margins and double the spacing */
+.accordion li.active .accordion-item-body > :first-child {
+  margin-top: 0;
+}
+
+.accordion li.active .accordion-item-body > :last-child {
+  margin-bottom: 0;
 }
 
 .accordion .accordion-item-body ul, /* @libs */
@@ -110,12 +118,15 @@
   font-size: var(--accordion-body-list-font-size); /* @libs */
 }
 
-.accordion .accordion-item-body a { /* @libs */
+/* inline links inside sentences are teal bold text; real buttons (a.button,
+   authored bold as sole paragraph content) are excluded so the global button
+   styling wins instead of being overridden to teal-on-teal */
+.accordion .accordion-item-body a:not(.button) { /* @libs */
   color: var(--link-color); /* @libs */
   font-weight: var(--font-weight-bold); /* @libs */
 }
 
-.accordion .accordion-item-body a:hover { /* @libs */
+.accordion .accordion-item-body a:not(.button):hover { /* @libs */
   color: var(--link-hover-color); /* @libs */
 }
 

@@ -100,7 +100,6 @@ main > .section > .columns-cta-wrapper {
   border-width: 0 2px 2px 0;
   width: var(--columns-cta-chevron-size);
   height: var(--columns-cta-chevron-size);
-  transform: rotate(-45deg);
   margin-left: var(--columns-cta-chevron-gap);
 }
 

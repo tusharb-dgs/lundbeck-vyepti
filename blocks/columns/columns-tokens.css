@@ -4,4 +4,48 @@
   --columns-divider-width: 1px;
   --columns-divider-spacing: var(--spacing-l, 32px);
   --columns-divider-color: #7ebcc6;
+
+  /* narrow-copy variant — single-column readable measure matching the source's
+     left content column on vyepti.com/what-to-expect (~540px; the source's
+     two-column split is not an even 50/50 — the copy column is the narrower
+     side). Left-aligned, flush to the section's leading edge; full width mobile. */
+  --columns-narrow-copy-max-width: 540px;
+  --columns-narrow-copy-heading-gap: 16px;
+  --columns-narrow-copy-para-gap: 16px;
+  --columns-narrow-copy-para-line-height: 22px;
+
+  /* mobile: the emphasized lead-in line ("Depending on your insurance…") is
+     capped to a narrower measure and centered so it wraps sooner, as the source. */
+  --columns-narrow-copy-lead-max-width-mobile: 70%;
+
+  /* locations variant — row of icon-above-label option cards (vyepti.com
+     /what-to-expect "choose from" group). Icon 108px, small centred label.
+     Constrained to the same readable measure as narrow-copy so the cards sit
+     within the text column rather than spreading the full section width. */
+  --columns-locations-icon-size: 108px;
+  --columns-locations-icon-size-mobile: 80px;
+
+  /* the hospital/outpatient icon artwork is more tightly cropped than the
+     others, so the source renders it at a smaller box to keep the optical
+     sizing even across the row (81px desktop, 65px mobile). */
+  --columns-locations-icon-size-dense: 81px;
+  --columns-locations-icon-size-dense-mobile: 65px;
+
+  /* mobile: narrow cell basis so the two columns pack close together and the
+     group centers (matching the source), rather than each spreading to half. */
+  --columns-locations-cell-basis-mobile: 34%;
+
+  /* mobile: vertical gap between the two wrapped rows of option cards
+     (yields ~12px total between rows, matching the source). */
+  --columns-locations-row-gap-mobile: 9px;
+  --columns-locations-label-font-size: var(--body-font-size-s, 16px);
+  --columns-locations-label-line-height: 18px;
+  --columns-locations-label-font-weight: 600;
+  --columns-locations-label-gap: 3px;
+  --columns-locations-max-width: var(--columns-narrow-copy-max-width);
+  --columns-locations-margin-bottom: 24px;
+
+  /* desktop (992px+) cards pack at their natural content width, left-aligned,
+     with this gap between them — matching the ~20px spacing on the source. */
+  --columns-locations-gap: 20px;
 }

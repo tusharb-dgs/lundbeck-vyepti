@@ -1,6 +1,6 @@
 # Cell Class
 
-Lets authors apply a CSS class to a block cell `div` by placing a `[classname]` code snippet as the first element of that cell. The snippet is consumed during decoration and does not appear in the rendered page.
+Lets authors apply one or more CSS classes to a block cell `div` by placing a `[classname]` (or `[classname-1,classname-2]`) code snippet as the first element of that cell. The snippet is consumed during decoration and does not appear in the rendered page.
 
 This is a separate system from the span-tags `[[double-bracket]]` syntax. Single brackets formatted as **inline code** via the DA toolbar target the parent cell div; double brackets authored as plain text target inline text spans within a paragraph or heading.
 
@@ -24,7 +24,30 @@ Place it before any other content in the cell. The `[color-primary]` line is rem
 </div>
 ```
 
-### 1.2 Position requirement
+### 1.2 Multiple classes
+
+Separate class names with a comma (no spaces) to apply more than one class to the same cell:
+
+1. Type `[width-50,bg-grey]` as the first line of the cell
+2. Select the full text `[width-50,bg-grey]`
+3. Click the **`<>`** (Toggle inline code) button in the DA toolbar
+
+```html
+<div class="width-50 bg-grey">
+  <p>Symptoms are typically first seen in the first week of treatment.</p>
+</div>
+```
+
+### 1.3 Width utility classes
+
+`width-75`, `width-66`, `width-50`, `width-33`, and `width-25` set a cell's width to that approximate percentage (defined in `styles/styles.css`). Apply one to an individual column cell to size it within its row, or combine it with another class using the comma syntax above:
+
+```
+[width-33]
+[width-66,color-secondary]
+```
+
+### 1.4 Position requirement
 
 The code snippet must be the **first element** in the cell. A code snippet elsewhere in the cell is not matched and the cell is left unchanged.
 
@@ -32,15 +55,17 @@ The code snippet must be the **first element** in the cell. A code snippet elsew
 
 ❌ Not the first element — ignored: any other content appears before the inline code `[color-primary]`.
 
-### 1.3 Class name rules
+### 1.5 Class name rules
 
-Only letters, digits, hyphens, and underscores are accepted. Invalid names are silently ignored and the cell is left unchanged.
+Only letters, digits, hyphens, underscores, and commas (as a separator between multiple class names) are accepted. Invalid names are silently ignored and the cell is left unchanged.
 
 ✅ `[color-primary]` — letters and hyphens  
 ✅ `[hide-mobile]` — letters and hyphens  
 ✅ `[stats_callout]` — underscore allowed  
+✅ `[width-50,bg-grey]` — comma-separated, multiple classes  
 ❌ `[color primary]` — space not allowed  
 ❌ `[color@primary]` — special character not allowed  
+❌ `[width-50, bg-grey]` — space after comma not allowed  
 ❌ `[]` — empty name not matched
 
 ---
@@ -57,9 +82,9 @@ The function iterates every cell `div` (each direct child of each row) inside th
 
 1. The first element child is a `<p>`
 2. That `<p>` contains exactly one child element, and it is a `<code>`
-3. The `<code>` text content matches `/^\[([a-zA-Z0-9_-]+)\]$/`
+3. The `<code>` text content matches `/^\[([a-zA-Z0-9_,-]+)\]$/`
 
-When all three conditions are met, the matched class name is added to the cell `div` and the `<p>` is removed. Cells that do not match are left completely unchanged.
+When all three conditions are met, the matched text is split on commas and each resulting class name is added to the cell `div`; the `<p>` is removed. Cells that do not match are left completely unchanged.
 
 ### 2.3 How to use it in a block
 

@@ -29,14 +29,16 @@
   --accordion-body-line-height: 22px; /* @libs */
   --accordion-body-font-weight: 400; /* @libs */
   --accordion-body-list-font-size: 16px; /* @libs */
+  --accordion-body-list-line-height: 18px; /* @libs — vyepti-faq li line-height, tighter than paragraphs */
+  --accordion-body-list-margin-bottom: 15px; /* @libs — space below the list */
   --accordion-body-heading-font-size: 20px; /* @libs */
   --accordion-body-heading-line-height: 22px; /* @libs */
   --accordion-body-heading-font-weight: 600; /* @libs */
-  --accordion-body-paragraph-margin-top: 20px; /* @libs */
+  --accordion-body-paragraph-margin-top: 16px; /* @libs — vyepti-faq inter-block rhythm */
   --accordion-body-heading-spacing: 24px; /* @libs */
-  --accordion-body-list-margin-top: 15px; /* @libs */
+  --accordion-body-list-margin-top: 16px; /* @libs */
   --accordion-body-list-indent: 19px; /* @libs */
-  --accordion-body-list-item-gap: 8px; /* @libs */
+  --accordion-body-list-item-gap: 7px; /* @libs */
   --accordion-body-panel-padding-bottom: 26px; /* @libs — last expanded panel, mobile */
 
   /* motion */
@@ -104,7 +106,7 @@
 /* panel lists — vyepti-faq .rteComponent ul */
 .accordion > ul > li .accordion-item-body ul { /* @libs */
   list-style: none; /* @libs */
-  margin: var(--accordion-body-list-margin-top) 0 0; /* @libs */
+  margin: var(--accordion-body-list-margin-top) 0 var(--accordion-body-list-margin-bottom); /* @libs */
   padding: 0; /* @libs */
 }
 
@@ -115,7 +117,7 @@
   font-family: var(--body-font-family); /* @libs */
   font-size: var(--accordion-body-list-font-size); /* @libs */
   font-weight: var(--accordion-body-font-weight); /* @libs */
-  line-height: var(--accordion-body-line-height); /* @libs */
+  line-height: var(--accordion-body-list-line-height); /* @libs */
   color: var(--accordion-body-color); /* @libs */
   -webkit-font-smoothing: antialiased; /* @libs */
 }
@@ -146,8 +148,8 @@
     --accordion-label-line-height-active: 25px; /* @libs — expanded title, desktop */
     --accordion-body-gap: 16px; /* @libs */
     --accordion-body-heading-font-size: 22px; /* @libs */
-    --accordion-body-paragraph-margin-top: 24px; /* @libs */
-    --accordion-body-list-margin-top: 24px; /* @libs */
+    --accordion-body-paragraph-margin-top: 16px; /* @libs — vyepti-faq inter-block rhythm */
+    --accordion-body-list-margin-top: 16px; /* @libs */
     --accordion-body-list-indent: 23px; /* @libs */
     --accordion-body-content-indent: 58px; /* @libs */
     --accordion-body-panel-padding-bottom: 13px; /* @libs */

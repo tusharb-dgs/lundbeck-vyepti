@@ -2,8 +2,9 @@ import { createOptimizedPicture } from './aem.js';
 
 /**
  * Reads single-bracket syntax from the first child of each block cell div.
- * If a cell's first child is <p><code>[classname]</code></p>, the class name
- * is added to the cell div and the <p> is removed.
+ * If a cell's first child is <p><code>[classname]</code></p> or
+ * <p><code>[classname-1,classname-2]</code></p>, the class name(s) are
+ * added to the cell div and the <p> is removed.
  * @param {Element} block
  */
 export function decorateCellClass(block) {
@@ -13,9 +14,10 @@ export function decorateCellClass(block) {
       if (!first || first.tagName !== 'P' || first.children.length !== 1) return;
       const code = first.firstElementChild;
       if (code.tagName !== 'CODE') return;
-      const match = code.textContent.match(/^\[([a-zA-Z0-9_-]+)\]$/);
+      const match = code.textContent.match(/^\[([a-zA-Z0-9_,-]+)\]$/);
       if (!match) return;
-      div.classList.add(match[1]);
+      const classes = match[1].split(',').filter(Boolean);
+      div.classList.add(...classes);
       first.remove();
     });
   });
@@ -137,9 +139,26 @@ function getArtDirectionSourceMeta(imageIndex) {
 }
 
 /**
- * Walks a block image cell in document order; collects up to five `{ src, alt }` entries.
+ * Nearest ancestor `<a href>` between `el` and `root` (exclusive), or `null`.
+ * @param {Element} el
+ * @param {Element} root
+ * @returns {HTMLAnchorElement|null}
+ */
+function findWrappingLink(el, root) {
+  let node = el.parentElement;
+  while (node && node !== root) {
+    if (node.matches('a[href]')) return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+
+/**
+ * Walks a block image cell in document order; collects up to five `{ src, alt, link }` entries.
+ * `link` (the wrapping `<a>`, if any) is only captured for the first entry — links wrapping
+ * any other picture/img are ignored.
  * @param {HTMLElement} cell
- * @returns {{ src: string, alt: string }[]}
+ * @returns {{ src: string, alt: string, link: HTMLAnchorElement|null }[]}
  */
 export function collectBlockCellImageSources(cell) {
   const out = [];
@@ -150,11 +169,13 @@ export function collectBlockCellImageSources(cell) {
       if (el.matches('picture')) {
         const img = el.querySelector('img[src]');
         if (img) {
-          out.push({ src: img.src, alt: img.getAttribute('alt') ?? '' });
+          const link = out.length === 0 ? findWrappingLink(el, cell) : null;
+          out.push({ src: img.src, alt: img.getAttribute('alt') ?? '', link });
         }
       } else if (el.matches('img[src]')) {
         if (!el.closest('picture')) {
-          out.push({ src: el.src, alt: el.getAttribute('alt') ?? '' });
+          const link = out.length === 0 ? findWrappingLink(el, cell) : null;
+          out.push({ src: el.src, alt: el.getAttribute('alt') ?? '', link });
         }
       } else {
         walk(el);
@@ -166,7 +187,10 @@ export function collectBlockCellImageSources(cell) {
 }
 
 /**
- * One &lt;picture&gt; with art-direction sources (different assets per viewport), same URL pattern as `createOptimizedPicture`.
+ * One &lt;picture&gt; with art-direction sources (different authored assets per viewport).
+ * Each breakpoint is already a distinct DA-authored rendition, so — unlike
+ * `createOptimizedPicture` — no webp alternate is generated per breakpoint; only the
+ * originally authored format is used, one &lt;source&gt; per breakpoint.
  * @param {{ src: string, alt: string }[]} sources 2–5 entries
  * @param {boolean} eager loading on the fallback &lt;img&gt;
  * @returns {HTMLPictureElement}
@@ -182,19 +206,13 @@ export function createArtDirectionPicture(sources, eager) {
     const ext = pathname.split('.').pop();
     const { media, width } = getArtDirectionSourceMeta(i);
 
-    const webp = document.createElement('source');
-    webp.setAttribute('media', media);
-    webp.setAttribute('type', 'image/webp');
-    webp.setAttribute('srcset', `${origin}${pathname}?width=${width}&format=webply&optimize=medium`);
-    picture.append(webp);
-
-    const fallback = document.createElement('source');
-    fallback.setAttribute('media', media);
-    fallback.setAttribute(
+    const source = document.createElement('source');
+    source.setAttribute('media', media);
+    source.setAttribute(
       'srcset',
       `${origin}${pathname}?width=${width}&format=${ext}&optimize=medium`,
     );
-    picture.append(fallback);
+    picture.append(source);
   }
 
   const defaultSrc = capped[0].src;
@@ -245,18 +263,23 @@ export function buildPictureContentFromImageCell(cell, options = {}) {
     return frag;
   }
 
-  if (sources.length === 1) {
-    frag.append(
-      createOptimizedPicture(
-        sources[0].src,
-        sources[0].alt,
-        eagerSingle,
-        singlePictureBreakpoints,
-      ),
-    );
-    return frag;
+  const picture = sources.length === 1
+    ? createOptimizedPicture(
+      sources[0].src,
+      sources[0].alt,
+      eagerSingle,
+      singlePictureBreakpoints,
+    )
+    : createArtDirectionPicture(sources, eagerArtDirection);
+
+  const { link } = sources[0];
+  if (link) {
+    const anchor = link.cloneNode(false);
+    anchor.append(picture);
+    frag.append(anchor);
+  } else {
+    frag.append(picture);
   }
 
-  frag.append(createArtDirectionPicture(sources, eagerArtDirection));
   return frag;
 }
