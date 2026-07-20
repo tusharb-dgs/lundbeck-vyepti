@@ -5,7 +5,7 @@
    FORM CONTAINER
 ===================================== */
 
-.form form {
+.ugc-form form {
   max-width: var(--ugc-form-width);
   margin: 0 auto;
 }
@@ -53,7 +53,7 @@
    LABELS
 ===================================== */
 
-.form .field-wrapper label {
+.ugc-form .field-wrapper label {
   display: block;
   font-size: var(--body-font-size-ms);
   font-weight: 600;
@@ -61,13 +61,13 @@
   margin-bottom: 8px;
 }
 
-.form .field-wrapper label[data-required="true"]::after {
+.ugc-form .field-wrapper label[data-required="true"]::after {
   content: "* ";
   color: var(--brand-primary);
   margin-inline-start: 0ch;
 }
 
-.form .field-wrapper label {
+.ugc-form .field-wrapper label {
   display: flex;
   align-items: center;
   /* gap: 12px; */
@@ -84,19 +84,19 @@
   font-weight: 400;
 }
 
-.form label.ugc-label-enhanced {
+.ugc-form label.ugc-label-enhanced {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 /* Hide original star */
-.form label[data-label-enhanced="true"][data-required]::after {
+.ugc-form label[data-label-enhanced="true"][data-required]::after {
   content: none;
 }
 
 /* Add star after label text */
-.form label[data-label-enhanced="true"]
+.ugc-form label[data-label-enhanced="true"]
 .ugc-label-text::after {
   content: '* ';
   color: var(--brand-primary);
@@ -108,21 +108,21 @@
 ===================================== */
 
 @media (width >= 600px) {
-  .form .text-wrapper input,
-  .form .email-wrapper input,
-  .form .text-area-wrapper textarea,
-  .form .select-wrapper select {
+  .ugc-form .text-wrapper input,
+  .ugc-form .email-wrapper input,
+  .ugc-form .text-area-wrapper textarea,
+  .ugc-form .select-wrapper select {
     max-width: 100%;
   }
 }
 
-.form .text-wrapper input,
-.form .email-wrapper input,
-.form .tel-wrapper input,
-.form .number-wrapper input,
-.form .date-wrapper input,
-.form .password-wrapper input,
-.form .select-wrapper select {
+.ugc-form .text-wrapper input,
+.ugc-form .email-wrapper input,
+.ugc-form .tel-wrapper input,
+.ugc-form .number-wrapper input,
+.ugc-form .date-wrapper input,
+.ugc-form .password-wrapper input,
+.ugc-form .select-wrapper select {
   width: 100%;
   height: 44px;
   padding: 0 14px;
@@ -137,7 +137,7 @@
 
 /* textarea */
 
-.form .text-area-wrapper textarea {
+.ugc-form .text-area-wrapper textarea {
   width: 100%;
   min-height: 140px;
   padding: 12px;
@@ -153,19 +153,19 @@
 
 /* focus */
 
-.form .text-wrapper input:focus,
-.form .email-wrapper input:focus,
-.form .text-area-wrapper textarea:focus,
-.form .select-wrapper select:focus {
+.ugc-form .text-wrapper input:focus,
+.ugc-form .email-wrapper input:focus,
+.ugc-form .text-area-wrapper textarea:focus,
+.ugc-form .select-wrapper select:focus {
   outline: none;
   border-color: var(--brand-primary);
   box-shadow: 0 0 0 2px rgb(4 97 131 / 15%);
 }
 
 /* hover*/
-.form .ugc-input input:hover,
-.form .ugc-input select:hover,
-.form .ugc-textarea textarea:hover {
+.ugc-form .ugc-input input:hover,
+.ugc-form .ugc-input select:hover,
+.ugc-form .ugc-textarea textarea:hover {
   /* border-color: var(--text-color); */
 
   border: 1px solid var(--dark-color);
@@ -173,10 +173,10 @@
 
 /* spacing */
 
-.form .text-wrapper,
-.form .email-wrapper,
-.form .text-area-wrapper,
-.form .select-wrapper {
+.ugc-form .text-wrapper,
+.ugc-form .email-wrapper,
+.ugc-form .text-area-wrapper,
+.ugc-form .select-wrapper {
   margin-bottom: 24px;
 }
 
@@ -195,20 +195,20 @@
    CHECKBOXES
 ===================================== */
 
-.form .checkbox-wrapper {
+.ugc-form .checkbox-wrapper {
   margin-bottom: 20px;
    display: flex;
   align-items: flex-start; /* Aligns items to the top line */
   gap: 8px;     
 }
 
-.form .ugc-checkbox.checkbox-wrapper.selection-wrapper {
+.ugc-form .ugc-checkbox.checkbox-wrapper.selection-wrapper {
   display: flex;
   align-items: flex-start;
   gap: 8px;
 }
 
-.form .ugc-checkbox.checkbox-wrapper.selection-wrapper input[type='checkbox'] {
+.ugc-form .ugc-checkbox.checkbox-wrapper.selection-wrapper input[type='checkbox'] {
   /* transform: scale(1.5); */
   width: var(--section-padding);
   height: var(--section-padding);
@@ -219,13 +219,13 @@
   accent-color: var(--brand-primary);
 }
 
-.form .checkbox-wrapper input[type='checkbox'] {
+.ugc-form .checkbox-wrapper input[type='checkbox'] {
   width: 16px;
   height: 16px;
   margin-right: 10px;
 }
 
-.form .checkbox-wrapper label {
+.ugc-form .checkbox-wrapper label {
   display: inline;
   font-size: var(--body-font-size-xs);
   font-weight: 400;
@@ -241,11 +241,11 @@
   margin-top: 30px;
 }
 
-.form form > .ugc-submit.field-wrapper.submit-wrapper {
+.ugc-form form > .ugc-submit.field-wrapper.submit-wrapper {
   margin-top: 30px;
 }
 
-.form .submit-wrapper button {
+.ugc-form .submit-wrapper button {
   background: var(--brand-primary);
   /* color: var(--button-primary-color); */
   border: var(--button-border-width)
@@ -312,7 +312,7 @@
 }
 
 main img,
-.form img {
+.ugc-form img {
   max-width: none;
 }
 
@@ -417,13 +417,13 @@ main img,
    VALIDATIONS
 ===================================== */
 
-.form input.field-error,
-.form textarea.field-error {
+.ugc-form input.field-error,
+.ugc-form textarea.field-error {
   border-color: var(--error-color);
 }
 
-.form input.field-error:focus,
-.form textarea.field-error:focus {
+.ugc-form input.field-error:focus,
+.ugc-form textarea.field-error:focus {
   border-color: var(--error-color);
   box-shadow: 0 0 0 2px rgb(192 44 87 / 15%);
 }
@@ -446,8 +446,8 @@ main img,
 }
 
 
-.form input.field-valid,
-.form textarea.field-valid {
+.ugc-form input.field-valid,
+.ugc-form textarea.field-valid {
   border-color: var(--form-input-border-color);
 }
 

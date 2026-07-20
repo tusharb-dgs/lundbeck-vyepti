@@ -449,7 +449,7 @@ function enhanceLabels() {
 }
 
 function init() {
-  document.querySelectorAll('.form form').forEach((form) => {
+  document.querySelectorAll('.ugc-form form').forEach((form) => {
     form.setAttribute('novalidate', '');
   });
   document.querySelectorAll('.ugc-file.field-wrapper.file-wrapper').forEach(initializeUpload);
