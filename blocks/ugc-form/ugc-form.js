@@ -150,7 +150,6 @@ function initializeUpload(wrapper) {
 }
 
 /* VALIDATIONS */
-
 function removeError(field) {
   field.classList.remove('field-error');
   const wrapper = field.closest('.field-wrapper');
