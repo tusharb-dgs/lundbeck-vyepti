@@ -35,7 +35,7 @@ function createUploadRow(isFirst = false) {
     </div>
 
     <div class="ugc-upload-content">
-      <div class="ugc-upload-label">
+      <div class="ugc-upload-label file-upload-sub-label">
         Please upload your file(s)
       </div>
 

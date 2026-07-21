@@ -4,11 +4,20 @@
 /* FORM CONTAINER */
 
 .ugc-form form {
-  max-width: var(--ugc-form-width);
+  /* max-width: var(--ugc-form-width); */
   margin: 0 auto;
 }
 
 /* HEADINGS */
+
+.ugc-main-heading h2{
+  margin-bottom:16px;
+}
+
+/* .ugc-section-heading p{
+  margin-top: 24px;
+  margin-bottom: 8px;
+} */
 
 .ugc-section-heading h2,
 .ugc-section-heading h3,
@@ -16,7 +25,9 @@
   color: var(--brand-primary);
   font-size: var(--heading-font-size-s);
   font-weight: var(--ugc-heading-weight);
-  margin: 0px 0 -10px;
+  /* margin: 0px 0 -10px; */
+  margin-top: 24px;
+  margin-bottom: 4px;
 }
 
 /* TEXT CONTENT */
@@ -25,31 +36,43 @@
   font-size: var(--body-font-size-xs);
   line-height: var(--body-line-height);
   margin-bottom: 16px;
+  margin-top: 0px;
   color: var(--text-color);
 }
+
+
 
 
 .ugc-note p {
   font-size: var(--body-font-size-s);
   font-style: italic;
-  margin-bottom: 24px;
+  margin-top:8px;
+  margin-bottom: -2px;
   color: var(--text-color);
 }
 
 .ugc-instructions p {
   font-size: var(--body-font-size-xs);
   line-height: var(--body-line-height);
-  margin-bottom: 12px;
+  margin-bottom: 0px;
+  margin-top: 0px;
   color: var(--text-color);
+}
+
+.upload-instructions p {
+  margin-bottom: 2px;
 }
 
 /* LABELS */
 
 .ugc-form .field-wrapper label {
-  display: block;
   font-size: var(--body-font-size-ms);
   font-weight: 600;
   color: var(--brand-primary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top:22px;
   margin-bottom: 8px;
 }
 
@@ -59,12 +82,15 @@
   margin-inline-start: 0ch;
 }
 
-.ugc-form .field-wrapper label {
+.ugc-form .checkbox-wrapper label[data-required="true"]::after{
+content: "";
+}
+
+/* .ugc-form .field-wrapper label {
   display: flex;
   align-items: center;
-  /* gap: 12px; */
   flex-wrap: wrap;
-}
+} */
 
 .ugc-label-text {
   color: var(--brand-primary);
@@ -72,7 +98,7 @@
 
 .ugc-label-helper {
   color: var(--text-color);
-  font-size: var(--body-font-size-s);
+  font-size: 14px;
   font-weight: 400;
 }
 
@@ -97,6 +123,10 @@
 
 /* INPUT FIELDS */
 
+.ugc-input{
+  margin-bottom:8px;
+}
+
 @media (width >= 600px) {
   .ugc-form .text-wrapper input,
   .ugc-form .email-wrapper input,
@@ -114,7 +144,7 @@
 .ugc-form .password-wrapper input,
 .ugc-form .select-wrapper select {
   width: 100%;
-  height: 44px;
+  height: 47px;
   padding: 0 14px;
   border: var(--section-divider-width)
     solid var(--text-color);
@@ -167,7 +197,7 @@
 .ugc-form .email-wrapper,
 .ugc-form .text-area-wrapper,
 .ugc-form .select-wrapper {
-  margin-bottom: 24px;
+  /* margin-bottom: 24px; */
 }
 
 /* INLINE HELP TEXT */
@@ -219,6 +249,10 @@
   color: var(--text-color);
 }
 
+.ugc-form .field-wrapper label{
+  margin-top:0px
+}
+
 /* SUBMIT BUTTON */
 
 .ugc-submit {
@@ -253,6 +287,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .ugc-preview-container {
@@ -321,6 +356,10 @@ main img,
   font-size: var(--body-font-size-xs);
 }
 
+.form input.ugc-file-input{
+  padding: 0px;
+}
+
 .ugc-remove-upload {
   border: none;
   background: transparent;
@@ -358,7 +397,7 @@ main img,
 .ugc-add-more-media {
   display: inline-block;
   align-self: flex-start;
-  margin-top: 8px;
+  margin-top: 10px;
   margin-bottom: 24px;
   max-width: 150px;
   padding: 4px 8px;
@@ -386,6 +425,27 @@ main img,
 .ugc-add-more-media:disabled {
   opacity: .5;
   cursor: not-allowed;
+}
+
+.ugc-file-input::file-selector-button {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  max-width: 150px;
+  padding: 4px 8px;
+  background: #eee;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  border-radius: unset;
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.file-upload-sub-label{
+  font-size: var(--body-font-size-s);
+  font-weight: 600;
 }
 
 /* VALIDATIONS */
@@ -437,6 +497,7 @@ main img,
 
 .ugc-terms p {
   padding-left: 45px;
+  margin-top: -10px;
 }
 
 @media (max-width: 767px) {
