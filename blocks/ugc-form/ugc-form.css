@@ -4,7 +4,6 @@
 /* FORM CONTAINER */
 
 .ugc-form form {
-  /* max-width: var(--ugc-form-width); */
   margin: 0 auto;
 }
 
@@ -25,7 +24,6 @@
   color: var(--brand-primary);
   font-size: var(--heading-font-size-s);
   font-weight: var(--ugc-heading-weight);
-  /* margin: 0px 0 -10px; */
   margin-top: 24px;
   margin-bottom: 4px;
 }
@@ -36,7 +34,7 @@
   font-size: var(--body-font-size-xs);
   line-height: var(--body-line-height);
   margin-bottom: 16px;
-  margin-top: 0px;
+  margin-top: var(--ugc-zero-px);
   color: var(--text-color);
 }
 
@@ -47,15 +45,15 @@
   font-size: var(--body-font-size-s);
   font-style: italic;
   margin-top:8px;
-  margin-bottom: -2px;
+  margin-bottom: 10px;
   color: var(--text-color);
 }
 
 .ugc-instructions p {
   font-size: var(--body-font-size-xs);
   line-height: var(--body-line-height);
-  margin-bottom: 0px;
-  margin-top: 0px;
+  margin-bottom: var(--ugc-zero-px);
+  margin-top: var(--ugc-zero-px);
   color: var(--text-color);
 }
 
@@ -67,7 +65,7 @@
 
 .ugc-form .field-wrapper label {
   font-size: var(--body-font-size-ms);
-  font-weight: 600;
+  font-weight: var(--ugc-heading-weight);
   color: var(--brand-primary);
   display: flex;
   align-items: center;
@@ -99,7 +97,7 @@ content: "";
 .ugc-label-helper {
   color: var(--text-color);
   font-size: 14px;
-  font-weight: 400;
+  font-weight: var(--ugc-label-weight);
 }
 
 .ugc-form label.ugc-label-enhanced {
@@ -161,8 +159,7 @@ content: "";
   width: 100%;
   min-height: 140px;
   padding: 12px;
-  border: var(--section-divider-width)
-    solid var(--text-color);
+  border: var(--section-divider-width) solid var(--text-color);
   border-radius: var(--button-icon-height);
   background: var(--form-input-background);
   color: var(--form-input-text-color);
@@ -186,8 +183,6 @@ content: "";
 .ugc-form .ugc-input input:hover,
 .ugc-form .ugc-input select:hover,
 .ugc-form .ugc-textarea textarea:hover {
-  /* border-color: var(--text-color); */
-
   border: 1px solid var(--dark-color);
 }
 
@@ -197,7 +192,7 @@ content: "";
 .ugc-form .email-wrapper,
 .ugc-form .text-area-wrapper,
 .ugc-form .select-wrapper {
-  /* margin-bottom: 24px; */
+  margin-bottom: 24px;
 }
 
 /* INLINE HELP TEXT */
@@ -244,7 +239,7 @@ content: "";
 .ugc-form .checkbox-wrapper label {
   display: inline;
   font-size: var(--body-font-size-xs);
-  font-weight: 400;
+  font-weight: var(--ugc-label-weight);
   line-height: var(--body-line-height);
   color: var(--text-color);
 }
@@ -357,7 +352,7 @@ main img,
 }
 
 .form input.ugc-file-input{
-  padding: 0px;
+  padding: var(--ugc-zero-px);
 }
 
 .ugc-remove-upload {
@@ -406,7 +401,7 @@ main img,
   color: var(--text-color);
   border-radius: unset;
   font-size: var(--body-font-size-s);
-  font-weight: 400;
+  font-weight: var(--ugc-label-weight);
   cursor: pointer;
 }
 
@@ -446,13 +441,13 @@ main img,
   color: var(--text-color);
   border-radius: unset;
   font-size: var(--body-font-size-s);
-  font-weight: 400;
+  font-weight: var(--ugc-label-weight);
   cursor: pointer;
 }
 
 .file-upload-sub-label{
   font-size: var(--body-font-size-s);
-  font-weight: 600;
+  font-weight: var(--ugc-heading-weight);
 }
 
 /* VALIDATIONS */
@@ -503,7 +498,7 @@ main img,
 
 
 .ugc-terms p {
-  padding-left: 45px;
+  padding-left: 48px;
   margin-top: -10px;
 }
 .ugc-terms a{

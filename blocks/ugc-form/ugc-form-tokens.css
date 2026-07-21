@@ -1,16 +1,6 @@
-/* ugc-form design tokens */
 :root {
-  /* Colors */
-  --ugc-color-text-dark: #333333;
-  --ugc-color-btn-gray: #EAEAEA;
 
-  /* Typography */
-  --ugc-font-size-title: 24px;
   --ugc-heading-weight: 600;
-
-  /* Layout Dimensions */
-  --ugc-max-width: 600px;
-  --ugc-form-width: 420px;
-  --ugc-preview-size: 64px;
-  --form-field-gap: 16px;
+  --ugc-label-weight: 400;
+  --ugc-zero-px:0px;
 }
